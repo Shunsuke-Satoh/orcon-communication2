@@ -14,7 +14,7 @@ class PushFadeSegue: UIStoryboardSegue {
             with: (source.navigationController?.view)!,
             duration: 0.5,
             options: .transitionCrossDissolve,
-            animations: {
+            animations: { 
                 () -> Void in
                 self.source.navigationController?.pushViewController(self.destination, animated: false)
         },

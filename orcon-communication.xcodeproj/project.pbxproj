@@ -10,7 +10,6 @@
 		11BD56D53FB85CBCE75E8738 /* Pods_orcon_communication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1D79906649BB6A47BF6BD1 /* Pods_orcon_communication.framework */; };
 		5F4492B81C7A31E5FBBDAF92 /* Pods_orcon_communicationUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA7E9618691F6C7AD030187C /* Pods_orcon_communicationUITests.framework */; };
 		60024A25215F16E80028CB20 /* DoctorCalendarKindPopVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60024A24215F16E80028CB20 /* DoctorCalendarKindPopVC.swift */; };
-		602119942164C94B00F42546 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 602119932164C94B00F42546 /* GoogleService-Info.plist */; };
 		603B68812160E99C007232B6 /* ChatReserveVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603B68802160E99C007232B6 /* ChatReserveVC.swift */; };
 		603B68832160ECA1007232B6 /* ChatReserveCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603B68822160ECA1007232B6 /* ChatReserveCell.swift */; };
 		604B3C6D215C91E70028E3B0 /* UserRequestCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604B3C6C215C91E70028E3B0 /* UserRequestCell.swift */; };
@@ -82,7 +81,6 @@
 		4D1D79906649BB6A47BF6BD1 /* Pods_orcon_communication.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_orcon_communication.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		55F9221723A3CDC89AD81D45 /* Pods-orcon-communicationTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-orcon-communicationTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-orcon-communicationTests/Pods-orcon-communicationTests.release.xcconfig"; sourceTree = "<group>"; };
 		60024A24215F16E80028CB20 /* DoctorCalendarKindPopVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoctorCalendarKindPopVC.swift; sourceTree = "<group>"; };
-		602119932164C94B00F42546 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		602119952164EEC100F42546 /* orcon-communication.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "orcon-communication.entitlements"; sourceTree = "<group>"; };
 		603B68802160E99C007232B6 /* ChatReserveVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatReserveVC.swift; sourceTree = "<group>"; };
 		603B68822160ECA1007232B6 /* ChatReserveCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatReserveCell.swift; sourceTree = "<group>"; };
@@ -230,7 +228,6 @@
 				606FC8D32148B9F4008B4AEB /* Assets.xcassets */,
 				606FC8D52148B9F4008B4AEB /* LaunchScreen.storyboard */,
 				606FC8D82148B9F4008B4AEB /* Info.plist */,
-				602119932164C94B00F42546 /* GoogleService-Info.plist */,
 				606FC8D02148B9F3008B4AEB /* orcon_communication.xcdatamodeld */,
 			);
 			path = "orcon-communication";
@@ -451,7 +448,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				602119942164C94B00F42546 /* GoogleService-Info.plist in Resources */,
 				606FC8D72148B9F4008B4AEB /* LaunchScreen.storyboard in Resources */,
 				606FC8D42148B9F4008B4AEB /* Assets.xcassets in Resources */,
 				606FC8CF2148B9F3008B4AEB /* Main.storyboard in Resources */,
