@@ -7,7 +7,7 @@
 //
 
 import XCTest
-@testable import orcon_communication
+//@testable import orcon_communication
 
 class orcon_communicationTests: XCTestCase {
     
@@ -22,8 +22,7 @@ class orcon_communicationTests: XCTestCase {
     }
     
     func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        
     }
     
     func testPerformanceExample() {

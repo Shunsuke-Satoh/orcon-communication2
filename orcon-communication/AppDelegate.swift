@@ -8,15 +8,67 @@
 
 import UIKit
 import CoreData
+import Firebase
+import UserNotifications
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, MessagingDelegate {
 
     var window: UIWindow?
 
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        // Firebaseの初期設定
+        FirebaseApp.configure()
+        // リモート通知 (iOS10に対応)
+        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+        UNUserNotificationCenter.current().requestAuthorization(
+            options: authOptions,
+            completionHandler: {_, _ in })
+        // UNUserNotificationCenterDelegateの設定
+        UNUserNotificationCenter.current().delegate = self
+        // FCMのMessagingDelegateの設定
+        Messaging.messaging().delegate = self
+        // リモートプッシュの設定
+        application.registerForRemoteNotifications()
+        
+        let userDM = UserDefaultManager()
+        
+        // ユーザ登録以降の起動であればチャットデータを取得してメイン画面へ
+        if userDM.getOwnUserId() != "" {
+            
+            // スケジュールオブザーバー
+            
+            let fbM = FBRealTimeDataBaseManager.getInstance()
+            fbM.setScheduleObserver()
+            fbM.setKindObserver()
+            fbM.setKindDetailObserver()
+            
+            let chatDM = ChatDataManager.getInstance()
+            chatDM.getDataFromDB()
+            
+            self.window = UIWindow(frame: UIScreen.main.bounds)
+            let storyboard = UIStoryboard(name: "Main", bundle:nil)
+            
+            // ドクターの場合メイン画面へ
+            if CommonUtils.isUserTypeDoctor() {
+                let initialViewController = storyboard.instantiateViewController(withIdentifier: "DoctorMain")
+                self.window?.rootViewController = initialViewController
+            } else {
+                // カスタマーの場合、リクエストが済んでいるかでリクエスト画面かメイン画面へ
+                if RealmManager.getInstance().getRequestByCustomerId(customerId: userDM.getOwnUserId()) != nil{
+                    let initialViewController = storyboard.instantiateViewController(withIdentifier: "DoctorMain")
+                    self.window?.rootViewController = initialViewController
+                }else {
+                    let initialViewController = storyboard.instantiateViewController(withIdentifier: "userRequest")
+                    self.window?.rootViewController = initialViewController
+                }
+            }
+            self.window?.makeKeyAndVisible()
+        }
+        
         return true
     }
 
@@ -88,6 +140,36 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
     }
-
+    
+    // 未起動時：didLaunchの後呼ばれる
+    // フォア：画面上部の通知なしで呼ばれる
+    // バック：画面上部の通知をタップすると呼ばれる　→
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        // 何もしないでリスナーが勝手にデータ取得とかしてくれる
+        
+        completionHandler(UIBackgroundFetchResult.newData)
+    }
+    
+    // バックグラウンドで通知を受けてユーザが画面上部をタップした時のみ呼ばれる
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        // チャット画面に飛ばす
+        // TODO
+        print("受け取った")
+        
+        completionHandler()
+        
+    }
+    
+    // トークン取得時
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String) {
+        // トークンをUserDefaultに保存
+        let userDM = UserDefaultManager()
+        userDM.setOwnToken(token: fcmToken)
+        // トピックにトークンを登録
+        CommonUtils.signInTockenToChat()
+        CommonUtils.signInTockenToRequest()
+    }
+    
+    
 }
 

@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		11BD56D53FB85CBCE75E8738 /* Pods_orcon_communication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1D79906649BB6A47BF6BD1 /* Pods_orcon_communication.framework */; };
+		5F4492B81C7A31E5FBBDAF92 /* Pods_orcon_communicationUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA7E9618691F6C7AD030187C /* Pods_orcon_communicationUITests.framework */; };
+		60024A25215F16E80028CB20 /* DoctorCalendarKindPopVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60024A24215F16E80028CB20 /* DoctorCalendarKindPopVC.swift */; };
+		602119942164C94B00F42546 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 602119932164C94B00F42546 /* GoogleService-Info.plist */; };
+		603B68812160E99C007232B6 /* ChatReserveVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603B68802160E99C007232B6 /* ChatReserveVC.swift */; };
+		603B68832160ECA1007232B6 /* ChatReserveCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603B68822160ECA1007232B6 /* ChatReserveCell.swift */; };
+		604B3C6D215C91E70028E3B0 /* UserRequestCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604B3C6C215C91E70028E3B0 /* UserRequestCell.swift */; };
+		604B3C6F215CE63D0028E3B0 /* UserRequestPopVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604B3C6E215CE63D0028E3B0 /* UserRequestPopVC.swift */; };
+		604B3C75215DFCE70028E3B0 /* CalendarKindCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604B3C74215DFCE70028E3B0 /* CalendarKindCell.swift */; };
 		606FC8CA2148B9F3008B4AEB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606FC8C92148B9F3008B4AEB /* AppDelegate.swift */; };
 		606FC8CC2148B9F3008B4AEB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606FC8CB2148B9F3008B4AEB /* ViewController.swift */; };
 		606FC8CF2148B9F3008B4AEB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 606FC8CD2148B9F3008B4AEB /* Main.storyboard */; };
@@ -15,6 +24,38 @@
 		606FC8D72148B9F4008B4AEB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 606FC8D52148B9F4008B4AEB /* LaunchScreen.storyboard */; };
 		606FC8E22148B9F4008B4AEB /* orcon_communicationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606FC8E12148B9F4008B4AEB /* orcon_communicationTests.swift */; };
 		606FC8ED2148B9F4008B4AEB /* orcon_communicationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606FC8EC2148B9F4008B4AEB /* orcon_communicationUITests.swift */; };
+		606FC8FB2148DB74008B4AEB /* WelcomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606FC8FA2148DB74008B4AEB /* WelcomeVC.swift */; };
+		606FC8FD2148E3BF008B4AEB /* AcountEntryVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606FC8FC2148E3BF008B4AEB /* AcountEntryVC.swift */; };
+		606FC8FF214902E9008B4AEB /* AcountEntryConfirmVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606FC8FE214902E9008B4AEB /* AcountEntryConfirmVC.swift */; };
+		606FC90121490420008B4AEB /* AcountEntryCompleteVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606FC90021490420008B4AEB /* AcountEntryCompleteVC.swift */; };
+		606FC9032149F918008B4AEB /* MainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606FC9022149F918008B4AEB /* MainVC.swift */; };
+		606FC905214A17FE008B4AEB /* DoctorChatListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606FC904214A17FE008B4AEB /* DoctorChatListVC.swift */; };
+		606FC907214A1F1B008B4AEB /* EnhancedCircleImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606FC906214A1F1B008B4AEB /* EnhancedCircleImageView.swift */; };
+		606FC909214A361D008B4AEB /* DoctorCalendarVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606FC908214A361D008B4AEB /* DoctorCalendarVC.swift */; };
+		606FC90B214A3EC8008B4AEB /* DoctorCalendarSetVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606FC90A214A3EC8008B4AEB /* DoctorCalendarSetVC.swift */; };
+		606FC90D214A5D31008B4AEB /* PushFadeSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606FC90C214A5D31008B4AEB /* PushFadeSegue.swift */; };
+		60A4F5C5215B116B005A99CB /* DoctorRequestMVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A4F5C4215B116B005A99CB /* DoctorRequestMVC.swift */; };
+		60A4F5C7215B17B2005A99CB /* TransferVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A4F5C6215B17B2005A99CB /* TransferVC.swift */; };
+		60AC8D1F214F2C3C0049AB11 /* FBStorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60AC8D1E214F2C3C0049AB11 /* FBStorageManager.swift */; };
+		60BD396D216305A600197D9D /* SettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BD396C216305A600197D9D /* SettingVC.swift */; };
+		60FF95AA2150C8200001FDA5 /* ChatVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FF95A92150C8200001FDA5 /* ChatVC.swift */; };
+		60FF95AC2150DA140001FDA5 /* MockMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FF95AB2150DA140001FDA5 /* MockMessage.swift */; };
+		60FF95AE2151F3940001FDA5 /* ChatDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FF95AD2151F3940001FDA5 /* ChatDataManager.swift */; };
+		60FF95B02151F7010001FDA5 /* Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FF95AF2151F7010001FDA5 /* Constant.swift */; };
+		60FF95B621534E4E0001FDA5 /* RealmDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FF95B521534E4E0001FDA5 /* RealmDataModel.swift */; };
+		60FF95B8215356A70001FDA5 /* DateUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FF95B7215356A70001FDA5 /* DateUtils.swift */; };
+		60FF95BA215474150001FDA5 /* RealmManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FF95B9215474150001FDA5 /* RealmManager.swift */; };
+		60FF95BC21547E870001FDA5 /* UserDefaultManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FF95BB21547E870001FDA5 /* UserDefaultManager.swift */; };
+		60FF95BE2154DD920001FDA5 /* FBRealTimeDatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FF95BD2154DD920001FDA5 /* FBRealTimeDatabaseManager.swift */; };
+		60FF95C2215892C90001FDA5 /* ChatBarCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FF95C1215892C90001FDA5 /* ChatBarCell.swift */; };
+		60FF95CB2158AE570001FDA5 /* SelectUserTypeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FF95CA2158AE570001FDA5 /* SelectUserTypeVC.swift */; };
+		60FF95CD2159E9090001FDA5 /* UserRequestVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FF95CC2159E9090001FDA5 /* UserRequestVC.swift */; };
+		60FF95CF2159F4070001FDA5 /* DoctorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FF95CE2159F4070001FDA5 /* DoctorCell.swift */; };
+		60FF95D2215A3D880001FDA5 /* CommonUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FF95D1215A3D880001FDA5 /* CommonUtils.swift */; };
+		60FF95D4215A5D0F0001FDA5 /* Animator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FF95D3215A5D0F0001FDA5 /* Animator.swift */; };
+		60FF95D6215A680A0001FDA5 /* PopFadeSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FF95D5215A680A0001FDA5 /* PopFadeSegue.swift */; };
+		60FF95D8215A79430001FDA5 /* MainNVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FF95D7215A79430001FDA5 /* MainNVC.swift */; };
+		ACCDC6956AEF32ECD63B6004 /* Pods_orcon_communicationTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4811444A006B2C9DBAF4F984 /* Pods_orcon_communicationTests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,6 +76,19 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0D05EC9B90774702736363F0 /* Pods-orcon-communication.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-orcon-communication.debug.xcconfig"; path = "Pods/Target Support Files/Pods-orcon-communication/Pods-orcon-communication.debug.xcconfig"; sourceTree = "<group>"; };
+		3D2F34F9F2219C1092AD8B98 /* Pods-orcon-communicationUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-orcon-communicationUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-orcon-communicationUITests/Pods-orcon-communicationUITests.release.xcconfig"; sourceTree = "<group>"; };
+		4811444A006B2C9DBAF4F984 /* Pods_orcon_communicationTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_orcon_communicationTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4D1D79906649BB6A47BF6BD1 /* Pods_orcon_communication.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_orcon_communication.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		55F9221723A3CDC89AD81D45 /* Pods-orcon-communicationTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-orcon-communicationTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-orcon-communicationTests/Pods-orcon-communicationTests.release.xcconfig"; sourceTree = "<group>"; };
+		60024A24215F16E80028CB20 /* DoctorCalendarKindPopVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoctorCalendarKindPopVC.swift; sourceTree = "<group>"; };
+		602119932164C94B00F42546 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		602119952164EEC100F42546 /* orcon-communication.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "orcon-communication.entitlements"; sourceTree = "<group>"; };
+		603B68802160E99C007232B6 /* ChatReserveVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatReserveVC.swift; sourceTree = "<group>"; };
+		603B68822160ECA1007232B6 /* ChatReserveCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatReserveCell.swift; sourceTree = "<group>"; };
+		604B3C6C215C91E70028E3B0 /* UserRequestCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRequestCell.swift; sourceTree = "<group>"; };
+		604B3C6E215CE63D0028E3B0 /* UserRequestPopVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRequestPopVC.swift; sourceTree = "<group>"; };
+		604B3C74215DFCE70028E3B0 /* CalendarKindCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarKindCell.swift; sourceTree = "<group>"; };
 		606FC8C62148B9F3008B4AEB /* orcon-communication.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "orcon-communication.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		606FC8C92148B9F3008B4AEB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		606FC8CB2148B9F3008B4AEB /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -49,6 +103,41 @@
 		606FC8E82148B9F4008B4AEB /* orcon-communicationUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "orcon-communicationUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		606FC8EC2148B9F4008B4AEB /* orcon_communicationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = orcon_communicationUITests.swift; sourceTree = "<group>"; };
 		606FC8EE2148B9F4008B4AEB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		606FC8FA2148DB74008B4AEB /* WelcomeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeVC.swift; sourceTree = "<group>"; };
+		606FC8FC2148E3BF008B4AEB /* AcountEntryVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcountEntryVC.swift; sourceTree = "<group>"; };
+		606FC8FE214902E9008B4AEB /* AcountEntryConfirmVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcountEntryConfirmVC.swift; sourceTree = "<group>"; };
+		606FC90021490420008B4AEB /* AcountEntryCompleteVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcountEntryCompleteVC.swift; sourceTree = "<group>"; };
+		606FC9022149F918008B4AEB /* MainVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainVC.swift; sourceTree = "<group>"; };
+		606FC904214A17FE008B4AEB /* DoctorChatListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoctorChatListVC.swift; sourceTree = "<group>"; };
+		606FC906214A1F1B008B4AEB /* EnhancedCircleImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnhancedCircleImageView.swift; sourceTree = "<group>"; };
+		606FC908214A361D008B4AEB /* DoctorCalendarVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoctorCalendarVC.swift; sourceTree = "<group>"; };
+		606FC90A214A3EC8008B4AEB /* DoctorCalendarSetVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoctorCalendarSetVC.swift; sourceTree = "<group>"; };
+		606FC90C214A5D31008B4AEB /* PushFadeSegue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushFadeSegue.swift; sourceTree = "<group>"; };
+		60A4F5C4215B116B005A99CB /* DoctorRequestMVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoctorRequestMVC.swift; sourceTree = "<group>"; };
+		60A4F5C6215B17B2005A99CB /* TransferVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferVC.swift; sourceTree = "<group>"; };
+		60AC8D1E214F2C3C0049AB11 /* FBStorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FBStorageManager.swift; sourceTree = "<group>"; };
+		60BD396C216305A600197D9D /* SettingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingVC.swift; sourceTree = "<group>"; };
+		60FF95A92150C8200001FDA5 /* ChatVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatVC.swift; sourceTree = "<group>"; };
+		60FF95AB2150DA140001FDA5 /* MockMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockMessage.swift; sourceTree = "<group>"; };
+		60FF95AD2151F3940001FDA5 /* ChatDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatDataManager.swift; sourceTree = "<group>"; };
+		60FF95AF2151F7010001FDA5 /* Constant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constant.swift; sourceTree = "<group>"; };
+		60FF95B521534E4E0001FDA5 /* RealmDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmDataModel.swift; sourceTree = "<group>"; };
+		60FF95B7215356A70001FDA5 /* DateUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateUtils.swift; sourceTree = "<group>"; };
+		60FF95B9215474150001FDA5 /* RealmManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmManager.swift; sourceTree = "<group>"; };
+		60FF95BB21547E870001FDA5 /* UserDefaultManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultManager.swift; sourceTree = "<group>"; };
+		60FF95BD2154DD920001FDA5 /* FBRealTimeDatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FBRealTimeDatabaseManager.swift; sourceTree = "<group>"; };
+		60FF95C1215892C90001FDA5 /* ChatBarCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatBarCell.swift; sourceTree = "<group>"; };
+		60FF95CA2158AE570001FDA5 /* SelectUserTypeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectUserTypeVC.swift; sourceTree = "<group>"; };
+		60FF95CC2159E9090001FDA5 /* UserRequestVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRequestVC.swift; sourceTree = "<group>"; };
+		60FF95CE2159F4070001FDA5 /* DoctorCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoctorCell.swift; sourceTree = "<group>"; };
+		60FF95D1215A3D880001FDA5 /* CommonUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonUtils.swift; sourceTree = "<group>"; };
+		60FF95D3215A5D0F0001FDA5 /* Animator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animator.swift; sourceTree = "<group>"; };
+		60FF95D5215A680A0001FDA5 /* PopFadeSegue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopFadeSegue.swift; sourceTree = "<group>"; };
+		60FF95D7215A79430001FDA5 /* MainNVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainNVC.swift; sourceTree = "<group>"; };
+		957F92BF858308EB98B2E68A /* Pods-orcon-communicationUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-orcon-communicationUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-orcon-communicationUITests/Pods-orcon-communicationUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		B91C246DBDE9EADCF4812B7B /* Pods-orcon-communicationTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-orcon-communicationTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-orcon-communicationTests/Pods-orcon-communicationTests.debug.xcconfig"; sourceTree = "<group>"; };
+		DA7E9618691F6C7AD030187C /* Pods_orcon_communicationUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_orcon_communicationUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EDF883138762033E287634E1 /* Pods-orcon-communication.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-orcon-communication.release.xcconfig"; path = "Pods/Target Support Files/Pods-orcon-communication/Pods-orcon-communication.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +145,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				11BD56D53FB85CBCE75E8738 /* Pods_orcon_communication.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,6 +153,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ACCDC6956AEF32ECD63B6004 /* Pods_orcon_communicationTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -70,12 +161,36 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5F4492B81C7A31E5FBBDAF92 /* Pods_orcon_communicationUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0927D0C016E0F9898E348731 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				0D05EC9B90774702736363F0 /* Pods-orcon-communication.debug.xcconfig */,
+				EDF883138762033E287634E1 /* Pods-orcon-communication.release.xcconfig */,
+				B91C246DBDE9EADCF4812B7B /* Pods-orcon-communicationTests.debug.xcconfig */,
+				55F9221723A3CDC89AD81D45 /* Pods-orcon-communicationTests.release.xcconfig */,
+				957F92BF858308EB98B2E68A /* Pods-orcon-communicationUITests.debug.xcconfig */,
+				3D2F34F9F2219C1092AD8B98 /* Pods-orcon-communicationUITests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		2CB3A3A25C99950A9FC02326 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4D1D79906649BB6A47BF6BD1 /* Pods_orcon_communication.framework */,
+				4811444A006B2C9DBAF4F984 /* Pods_orcon_communicationTests.framework */,
+				DA7E9618691F6C7AD030187C /* Pods_orcon_communicationUITests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		606FC8BD2148B9F3008B4AEB = {
 			isa = PBXGroup;
 			children = (
@@ -83,6 +198,8 @@
 				606FC8E02148B9F4008B4AEB /* orcon-communicationTests */,
 				606FC8EB2148B9F4008B4AEB /* orcon-communicationUITests */,
 				606FC8C72148B9F3008B4AEB /* Products */,
+				0927D0C016E0F9898E348731 /* Pods */,
+				2CB3A3A25C99950A9FC02326 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -99,12 +216,21 @@
 		606FC8C82148B9F3008B4AEB /* orcon-communication */ = {
 			isa = PBXGroup;
 			children = (
-				606FC8C92148B9F3008B4AEB /* AppDelegate.swift */,
-				606FC8CB2148B9F3008B4AEB /* ViewController.swift */,
+				602119952164EEC100F42546 /* orcon-communication.entitlements */,
 				606FC8CD2148B9F3008B4AEB /* Main.storyboard */,
+				606FC8C92148B9F3008B4AEB /* AppDelegate.swift */,
+				60FF95C72158AD120001FDA5 /* Util */,
+				60FF95D0215A06D40001FDA5 /* Model */,
+				60FF95C62158ACE70001FDA5 /* DataManager */,
+				60FF95C32158AC450001FDA5 /* View */,
+				606FC90C214A5D31008B4AEB /* PushFadeSegue.swift */,
+				60FF95D7215A79430001FDA5 /* MainNVC.swift */,
+				60FF95D5215A680A0001FDA5 /* PopFadeSegue.swift */,
+				606FC906214A1F1B008B4AEB /* EnhancedCircleImageView.swift */,
 				606FC8D32148B9F4008B4AEB /* Assets.xcassets */,
 				606FC8D52148B9F4008B4AEB /* LaunchScreen.storyboard */,
 				606FC8D82148B9F4008B4AEB /* Info.plist */,
+				602119932164C94B00F42546 /* GoogleService-Info.plist */,
 				606FC8D02148B9F3008B4AEB /* orcon_communication.xcdatamodeld */,
 			);
 			path = "orcon-communication";
@@ -128,6 +254,84 @@
 			path = "orcon-communicationUITests";
 			sourceTree = "<group>";
 		};
+		60FF95C32158AC450001FDA5 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				606FC8CB2148B9F3008B4AEB /* ViewController.swift */,
+				606FC8FA2148DB74008B4AEB /* WelcomeVC.swift */,
+				60FF95CA2158AE570001FDA5 /* SelectUserTypeVC.swift */,
+				60A4F5C6215B17B2005A99CB /* TransferVC.swift */,
+				606FC8FC2148E3BF008B4AEB /* AcountEntryVC.swift */,
+				606FC8FE214902E9008B4AEB /* AcountEntryConfirmVC.swift */,
+				606FC90021490420008B4AEB /* AcountEntryCompleteVC.swift */,
+				606FC9022149F918008B4AEB /* MainVC.swift */,
+				60FF95A92150C8200001FDA5 /* ChatVC.swift */,
+				603B68802160E99C007232B6 /* ChatReserveVC.swift */,
+				603B68822160ECA1007232B6 /* ChatReserveCell.swift */,
+				60BD396C216305A600197D9D /* SettingVC.swift */,
+				60FF95C92158AE100001FDA5 /* User */,
+				60FF95C82158ADF90001FDA5 /* Doctor */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		60FF95C62158ACE70001FDA5 /* DataManager */ = {
+			isa = PBXGroup;
+			children = (
+				60FF95B9215474150001FDA5 /* RealmManager.swift */,
+				60FF95AD2151F3940001FDA5 /* ChatDataManager.swift */,
+				60FF95BD2154DD920001FDA5 /* FBRealTimeDatabaseManager.swift */,
+				60AC8D1E214F2C3C0049AB11 /* FBStorageManager.swift */,
+				60FF95BB21547E870001FDA5 /* UserDefaultManager.swift */,
+			);
+			path = DataManager;
+			sourceTree = "<group>";
+		};
+		60FF95C72158AD120001FDA5 /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				60FF95B7215356A70001FDA5 /* DateUtils.swift */,
+				60FF95AF2151F7010001FDA5 /* Constant.swift */,
+				60FF95D1215A3D880001FDA5 /* CommonUtils.swift */,
+				60FF95D3215A5D0F0001FDA5 /* Animator.swift */,
+			);
+			path = Util;
+			sourceTree = "<group>";
+		};
+		60FF95C82158ADF90001FDA5 /* Doctor */ = {
+			isa = PBXGroup;
+			children = (
+				606FC904214A17FE008B4AEB /* DoctorChatListVC.swift */,
+				606FC908214A361D008B4AEB /* DoctorCalendarVC.swift */,
+				606FC90A214A3EC8008B4AEB /* DoctorCalendarSetVC.swift */,
+				60024A24215F16E80028CB20 /* DoctorCalendarKindPopVC.swift */,
+				604B3C74215DFCE70028E3B0 /* CalendarKindCell.swift */,
+				60FF95C1215892C90001FDA5 /* ChatBarCell.swift */,
+				60A4F5C4215B116B005A99CB /* DoctorRequestMVC.swift */,
+				604B3C6E215CE63D0028E3B0 /* UserRequestPopVC.swift */,
+				604B3C6C215C91E70028E3B0 /* UserRequestCell.swift */,
+			);
+			path = Doctor;
+			sourceTree = "<group>";
+		};
+		60FF95C92158AE100001FDA5 /* User */ = {
+			isa = PBXGroup;
+			children = (
+				60FF95CE2159F4070001FDA5 /* DoctorCell.swift */,
+				60FF95CC2159E9090001FDA5 /* UserRequestVC.swift */,
+			);
+			path = User;
+			sourceTree = "<group>";
+		};
+		60FF95D0215A06D40001FDA5 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				60FF95AB2150DA140001FDA5 /* MockMessage.swift */,
+				60FF95B521534E4E0001FDA5 /* RealmDataModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -135,9 +339,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 606FC8F12148B9F4008B4AEB /* Build configuration list for PBXNativeTarget "orcon-communication" */;
 			buildPhases = (
+				2ACD60E9FEF3EEA7FA760060 /* [CP] Check Pods Manifest.lock */,
 				606FC8C22148B9F3008B4AEB /* Sources */,
 				606FC8C32148B9F3008B4AEB /* Frameworks */,
 				606FC8C42148B9F3008B4AEB /* Resources */,
+				C8966D1078AB4E4854BEFB27 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -152,6 +358,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 606FC8F42148B9F4008B4AEB /* Build configuration list for PBXNativeTarget "orcon-communicationTests" */;
 			buildPhases = (
+				DD8C0E69080A08854B017F58 /* [CP] Check Pods Manifest.lock */,
 				606FC8D92148B9F4008B4AEB /* Sources */,
 				606FC8DA2148B9F4008B4AEB /* Frameworks */,
 				606FC8DB2148B9F4008B4AEB /* Resources */,
@@ -170,6 +377,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 606FC8F72148B9F4008B4AEB /* Build configuration list for PBXNativeTarget "orcon-communicationUITests" */;
 			buildPhases = (
+				6DF5EA27191C5966D1E3573D /* [CP] Check Pods Manifest.lock */,
 				606FC8E42148B9F4008B4AEB /* Sources */,
 				606FC8E52148B9F4008B4AEB /* Frameworks */,
 				606FC8E62148B9F4008B4AEB /* Resources */,
@@ -196,13 +404,24 @@
 				TargetAttributes = {
 					606FC8C52148B9F3008B4AEB = {
 						CreatedOnToolsVersion = 9.4.1;
+						LastSwiftMigration = 1000;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 					606FC8DC2148B9F4008B4AEB = {
 						CreatedOnToolsVersion = 9.4.1;
+						LastSwiftMigration = 1000;
 						TestTargetID = 606FC8C52148B9F3008B4AEB;
 					};
 					606FC8E72148B9F4008B4AEB = {
 						CreatedOnToolsVersion = 9.4.1;
+						LastSwiftMigration = 1000;
 						TestTargetID = 606FC8C52148B9F3008B4AEB;
 					};
 				};
@@ -232,6 +451,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				602119942164C94B00F42546 /* GoogleService-Info.plist in Resources */,
 				606FC8D72148B9F4008B4AEB /* LaunchScreen.storyboard in Resources */,
 				606FC8D42148B9F4008B4AEB /* Assets.xcassets in Resources */,
 				606FC8CF2148B9F3008B4AEB /* Main.storyboard in Resources */,
@@ -254,13 +474,153 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		2ACD60E9FEF3EEA7FA760060 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-orcon-communication-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		6DF5EA27191C5966D1E3573D /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-orcon-communicationUITests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C8966D1078AB4E4854BEFB27 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-orcon-communication/Pods-orcon-communication-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/CalculateCalendarLogic/CalculateCalendarLogic.framework",
+				"${BUILT_PRODUCTS_DIR}/FSCalendar/FSCalendar.framework",
+				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
+				"${BUILT_PRODUCTS_DIR}/MKColorPicker/MKColorPicker.framework",
+				"${BUILT_PRODUCTS_DIR}/MessageKit/MessageKit.framework",
+				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
+				"${BUILT_PRODUCTS_DIR}/RSKImageCropper/RSKImageCropper.framework",
+				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
+				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/SCLAlertView/SCLAlertView.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftCop/SwiftCop.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftyStoreKit/SwiftyStoreKit.framework",
+				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
+				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CalculateCalendarLogic.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FSCalendar.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MKColorPicker.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MessageKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RSKImageCropper.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SCLAlertView.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftCop.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyStoreKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-orcon-communication/Pods-orcon-communication-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		DD8C0E69080A08854B017F58 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-orcon-communicationTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		606FC8C22148B9F3008B4AEB /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				603B68832160ECA1007232B6 /* ChatReserveCell.swift in Sources */,
+				60024A25215F16E80028CB20 /* DoctorCalendarKindPopVC.swift in Sources */,
+				606FC90B214A3EC8008B4AEB /* DoctorCalendarSetVC.swift in Sources */,
+				606FC907214A1F1B008B4AEB /* EnhancedCircleImageView.swift in Sources */,
+				604B3C6F215CE63D0028E3B0 /* UserRequestPopVC.swift in Sources */,
+				606FC9032149F918008B4AEB /* MainVC.swift in Sources */,
+				603B68812160E99C007232B6 /* ChatReserveVC.swift in Sources */,
+				606FC90121490420008B4AEB /* AcountEntryCompleteVC.swift in Sources */,
+				60FF95B8215356A70001FDA5 /* DateUtils.swift in Sources */,
+				606FC90D214A5D31008B4AEB /* PushFadeSegue.swift in Sources */,
+				60FF95D4215A5D0F0001FDA5 /* Animator.swift in Sources */,
 				606FC8D22148B9F3008B4AEB /* orcon_communication.xcdatamodeld in Sources */,
+				606FC8FD2148E3BF008B4AEB /* AcountEntryVC.swift in Sources */,
+				606FC8FF214902E9008B4AEB /* AcountEntryConfirmVC.swift in Sources */,
+				604B3C6D215C91E70028E3B0 /* UserRequestCell.swift in Sources */,
+				60FF95B621534E4E0001FDA5 /* RealmDataModel.swift in Sources */,
+				60FF95D6215A680A0001FDA5 /* PopFadeSegue.swift in Sources */,
+				60BD396D216305A600197D9D /* SettingVC.swift in Sources */,
+				60FF95C2215892C90001FDA5 /* ChatBarCell.swift in Sources */,
+				60FF95CD2159E9090001FDA5 /* UserRequestVC.swift in Sources */,
+				606FC8FB2148DB74008B4AEB /* WelcomeVC.swift in Sources */,
+				60FF95AE2151F3940001FDA5 /* ChatDataManager.swift in Sources */,
+				604B3C75215DFCE70028E3B0 /* CalendarKindCell.swift in Sources */,
+				60A4F5C7215B17B2005A99CB /* TransferVC.swift in Sources */,
+				60AC8D1F214F2C3C0049AB11 /* FBStorageManager.swift in Sources */,
+				60FF95BA215474150001FDA5 /* RealmManager.swift in Sources */,
+				60FF95D8215A79430001FDA5 /* MainNVC.swift in Sources */,
+				60FF95B02151F7010001FDA5 /* Constant.swift in Sources */,
+				606FC909214A361D008B4AEB /* DoctorCalendarVC.swift in Sources */,
+				60FF95AC2150DA140001FDA5 /* MockMessage.swift in Sources */,
 				606FC8CC2148B9F3008B4AEB /* ViewController.swift in Sources */,
+				60FF95CB2158AE570001FDA5 /* SelectUserTypeVC.swift in Sources */,
+				606FC905214A17FE008B4AEB /* DoctorChatListVC.swift in Sources */,
+				60FF95CF2159F4070001FDA5 /* DoctorCell.swift in Sources */,
+				60FF95BC21547E870001FDA5 /* UserDefaultManager.swift in Sources */,
+				60FF95BE2154DD920001FDA5 /* FBRealTimeDatabaseManager.swift in Sources */,
+				60FF95AA2150C8200001FDA5 /* ChatVC.swift in Sources */,
+				60FF95D2215A3D880001FDA5 /* CommonUtils.swift in Sources */,
+				60A4F5C5215B116B005A99CB /* DoctorRequestMVC.swift in Sources */,
 				606FC8CA2148B9F3008B4AEB /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -432,40 +792,56 @@
 		};
 		606FC8F22148B9F4008B4AEB /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0D05EC9B90774702736363F0 /* Pods-orcon-communication.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_STYLE = Automatic;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_ENTITLEMENTS = "orcon-communication/orcon-communication.entitlements";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = Y3BRG6LR98;
 				INFOPLIST_FILE = "orcon-communication/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.onenation.orcon-communication";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.one-nation.orcon-communication";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				PROVISIONING_PROFILE_SPECIFIER = orcon_com_dev;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 4.2;
+				SWIFT_WHOLE_MODULE_OPTIMIZATION = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
 		606FC8F32148B9F4008B4AEB /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = EDF883138762033E287634E1 /* Pods-orcon-communication.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_STYLE = Automatic;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_ENTITLEMENTS = "orcon-communication/orcon-communication.entitlements";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "orcon-communication/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.onenation.orcon-communication";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.one-nation.orcon-communication";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_VERSION = 4.2;
+				SWIFT_WHOLE_MODULE_OPTIMIZATION = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
 		606FC8F52148B9F4008B4AEB /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B91C246DBDE9EADCF4812B7B /* Pods-orcon-communicationTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -478,7 +854,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.onenation.orcon-communicationTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/orcon-communication.app/orcon-communication";
 			};
@@ -486,6 +862,7 @@
 		};
 		606FC8F62148B9F4008B4AEB /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 55F9221723A3CDC89AD81D45 /* Pods-orcon-communicationTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -498,7 +875,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.onenation.orcon-communicationTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/orcon-communication.app/orcon-communication";
 			};
@@ -506,6 +883,7 @@
 		};
 		606FC8F82148B9F4008B4AEB /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 957F92BF858308EB98B2E68A /* Pods-orcon-communicationUITests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -517,7 +895,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.onenation.orcon-communicationUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = "orcon-communication";
 			};
@@ -525,6 +903,7 @@
 		};
 		606FC8F92148B9F4008B4AEB /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3D2F34F9F2219C1092AD8B98 /* Pods-orcon-communicationUITests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -536,7 +915,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.onenation.orcon-communicationUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = "orcon-communication";
 			};
