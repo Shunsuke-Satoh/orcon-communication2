@@ -37,472 +37,26 @@ class FBRealTimeDataBaseManager {
         
     }
     
-    func uploadToken() {
-        ref.child(Constant.dbUser + "/" + UserDefaultManager().getOwnUserId() + "/" + Constant.dbUserToken).setValue(UserDefaultManager().getOwnToken())
-    }
-    
-    func uploadMessage(roomId: String, messageModel:MessageModel){
-        var message = Dictionary<String, Any>()
-        
-        // メッセージタイプ（テキスト・画像）
-        message[Constant.dbMessageMsgType] = messageModel.messageType
-        
-        // メッセージ内容
-        if messageModel.messageType == Constant.msgTypeText {
-            message[Constant.dbMessageContents] = messageModel.contents
-            
-            // 画像メッセージの時はコンテンツにFireStorage上のフルパスを入れる
-        } else if messageModel.messageType == Constant.msgTypeImage {
-            message[Constant.dbMessageContents] = imgM.getMessagePath(roomId: roomId, message: messageModel)
-        }
-        // 登録日時
-        message[Constant.dbMessageEntryDate] = DateUtils.stringFromDate(messageModel.entryDate)
-        
-        // 投稿者ユーザID
-        message[Constant.dbMessageSenderUid] = messageModel.senderId
-        
-        // RealTimeDBにアップロード
-        ref.child(Constant.dbMessage + "/" + roomId + "/" + messageModel.messageId).setValue(message)
-    }
-    
-    func updateRead(roomId:String,messageModel:MessageModel){
-        ref.child(Constant.dbMessage + "/" + roomId + "/" + messageModel.messageId + "/read").setValue(true)
-    }
-    
-    
-    func uploadUserAndDoctor(userId:String, userType:String, name:String, tel:String, email:String, password:String, clinicName:String, clinicAddress:String) {
-        //----------
-        // realtime databaseへのアップロード
-        //----------
-        var profile = Dictionary<String,String>()
-        profile[Constant.dbUserName] = name
-        profile[Constant.dbUserTel] = tel
-        profile[Constant.dbUserEmail] = email
-        profile[Constant.dbUserUsertype] = userType
-        profile[Constant.dbUserEntryDate] = DateUtils.stringFromDate(Date())
-        profile[Constant.dbUserStatus] = Constant.statusRequest.description
-        if userType == Constant.userTypeDoctor {
-            profile[Constant.dbUserClinicName] = clinicName
-            profile[Constant.dbUserClinicAddress] = clinicAddress
-            
-            // 医者情報にアップロード
-            ref.child(Constant.dbDoctor + "/" + userId).setValue(profile)
-            
-            profile[Constant.dbUserTopimgupdate] = DateUtils.stringFromDate(Date())
-        }
-        profile[Constant.dbUserIconimgupdate] = DateUtils.stringFromDate(Date())
-        
-        
-        // ユーザ情報にアップロード
-        ref.child(Constant.dbUser + "/" + userId).setValue(profile)
-    }
-    
-    func updateUserAndDoctor(userMdl:UserModel){
-        //----------
-        // realtime databaseへのアップロード
-        //----------
-        var profile = Dictionary<String,Any>()
-        profile[Constant.dbUserName] = userMdl.name
-        profile[Constant.dbUserTel] = userMdl.tel
-        profile[Constant.dbUserEmail] = userMdl.email
-        profile[Constant.dbUserUsertype] = userMdl.userType
-        profile[Constant.dbUserEntryDate] = DateUtils.stringFromDate(userMdl.entryDate!)
-        profile[Constant.dbUserStatus] = userMdl.status
-        
-        if CommonUtils.isUserTypeDoctor() {
-            profile[Constant.dbUserClinicName] = userMdl.clinicName
-            profile[Constant.dbUserClinicAddress] = userMdl.clinicAddress
-            
-            // 医者情報にアップロード
-            ref.child(Constant.dbDoctor + "/" + userMdl.userId).updateChildValues(profile)
-            
-            profile[Constant.dbUserTopimgupdate] = DateUtils.stringFromDate(Date())
-        } else if CommonUtils.isUserTypeUser() {
-            if let reqMdl = RealmManager.getInstance().getRequestByCustomerId(customerId: userMdl.userId) {
-                profile[Constant.dbUserRequestdoctorid] = reqMdl.doctorId
-            }
-        }
-        profile[Constant.dbUserIconimgupdate] = DateUtils.stringFromDate(Date())
-        
-        if let chatRooms = RealmManager.getInstance().getChatRoomModels() {
-            var rooms = Dictionary<String,String>()
-            for chatRoom in chatRooms {
-                rooms[chatRoom.roomId] = chatRoom.otherUser!.userId
-            }
-            profile[Constant.dbUserRooms] = rooms
-        }
-        
-        // ユーザ情報にアップロード
-        ref.child(Constant.dbUser + "/" + userMdl.userId).updateChildValues(profile)
-    }
-    
-    func downloadAndSaveRealmDoctorInfo(callback: @escaping (Bool,String)->Void) -> Void{
-        let realmDM = RealmManager.getInstance()
-        let dispatchGroup = DispatchGroup()
-        
-        // 先生情報を初期化
-        realmDM.clearDoctorData()
-        
-        self.ref.child(Constant.dbDoctor).observeSingleEvent(of: .value, with: { snapshot in
-            if let doctors = snapshot.value as? NSDictionary {
-                for (userId, doctor) in doctors {
-                    let uid = userId as! String
-                    let doctorFB = doctor as! NSDictionary
-                    let temp:[String] = []
-                    
-                    realmDM.insertUpdateUser(userId: uid, userType: Constant.userTypeDoctor, name: doctorFB[Constant.dbUserName] as! String, tel: doctorFB[Constant.dbUserTel] as! String, email: doctorFB[Constant.dbUserEmail] as! String, clinicName: doctorFB[Constant.dbUserClinicName] as! String, clinicAddress: doctorFB[Constant.dbUserClinicAddress] as! String, rooms: temp, requestDoctorId: "", entryDate: DateUtils.dateFromString(doctorFB[Constant.dbUserEntryDate] as! String), status:doctorFB[Constant.dbUserStatus] as! Int)
-                    
-                    
-                    dispatchGroup.enter()
-                    DispatchQueue.main.async(group: dispatchGroup) {
-                        self.imgM.downLoadImage(fullPath: self.imgM.getUserTopImgPath(userId: uid), callback: {uiImage in
-                            let userDM = UserDefaultManager()
-                            userDM.saveImageTop(userId: uid, uiImage: uiImage)
-                            dispatchGroup.leave()
-                        })
-                    }
-                    
-                    dispatchGroup.enter()
-                    DispatchQueue.main.async(group: dispatchGroup) {
-                        self.imgM.downLoadImage(fullPath: self.imgM.getUserIconImgPath(userId: uid), callback: {uiImage in
-                            let userDM = UserDefaultManager()
-                            userDM.saveImageIcon(userId: uid, uiImage: uiImage)
-                            dispatchGroup.leave()
-                        })
-                    }
-                }
-            } else {
-                callback(false, "医院情報が一件もありません")
-            }
-            
-            dispatchGroup.notify(queue: .main) {
-                callback(true, "")
-            }
-        })
-    }
-    
-    func uploadRequestFromCustomerToDoctor(doctorId:String) -> Void {
-        let userDM = UserDefaultManager()
-        var request = Dictionary<String,Any>()
-        
-        request[Constant.dbRequestIsConfirm] = false
-        request[Constant.dbRequestRequestDate] = DateUtils.stringFromDate(Date())
-        
-        ref.child(Constant.dbRequest + "/" + doctorId + "/" + userDM.getOwnUserId()).setValue(request)
-        
-        ref.child(Constant.dbUser + "/" + userDM.getOwnUserId() + "/" + Constant.dbUserRequestdoctorid).setValue(doctorId)
-    }
-    
-    // 承認
-    func updateRequestFromDoctorToCustomer(customerId:String){
-        let ownId = UserDefaultManager().getOwnUserId()
-        // チャットルーム作成
-        let roomId = ownId + "_" + DateUtils.stringFromDate(Date(), format: "yyyyMMdd_HHmmssSSS")
-        ref.child(Constant.dbUser  + "/" + customerId + "/" + Constant.dbUserRooms + "/" + roomId).setValue(ownId)
-        ref.child(Constant.dbUser + "/" + ownId + "/" + Constant.dbUserRooms + "/" + roomId).setValue(customerId)
-        
-        // ユーザステータス更新
-        ref.child(Constant.dbRequest + "/" + UserDefaultManager().getOwnUserId() + "/" + customerId + "/" + Constant.dbRequestIsConfirm).setValue(true)
-        ref.child(Constant.dbRequest + "/" + UserDefaultManager().getOwnUserId() + "/" + customerId + "/" + Constant.dbRequestConfirmDate).setValue(DateUtils.stringFromDate(Date()))
-        
-        // ユーザステータス更新
-        ref.child(Constant.dbUser + "/" + customerId + "/" + Constant.dbUserStatus).setValue(Constant.statusTreat)
-        
-        // Realm更新
-        RealmManager.getInstance().insertChatRoom(roomId: roomId, userId: customerId)
-        
-        RealmManager.getInstance().updateUser(userId: customerId, status: Constant.statusTreat)
-    }
-    
-    // 削除
-    func deleteRequestFromDoctor(customerId:String){
-        deleteRequest(doctorId: UserDefaultManager().getOwnUserId(), customerId: customerId)
-    }
-    // 削除
-    func deleteRequestFromUser(doctorId:String){
-        deleteRequest(doctorId: doctorId, customerId: UserDefaultManager().getOwnUserId())
-    }
-    // 削除共通
-    func deleteRequest(doctorId:String, customerId:String){
-        ref.child(Constant.dbRequest + "/" + doctorId + "/" + customerId).removeValue()
-    }
-    
     func downloadAllDataFromUserId(userId:String, callback: @escaping (Bool,String)->Void) -> Void {
-        // 0.realmデータベースを初期化
+        // realmデータベースを初期化
         RealmManager.getInstance().clearAllData()
 
-        
-        let dispatchGroup = DispatchGroup()
-        
-        // 1.自身のユーザ情報を取得
-        getUserByUserId(userId: userId, callback: { userMdl, requestDoctorId, error in
-            print("req="+requestDoctorId)
-            if error != "" {
-                callback(false, error) // ユーザ情報取得失敗
+        ChatDataManager.getInstance().getDataFromDB(callback: {(errorMsg) in
+            // 失敗
+            if errorMsg != "" {
+                callback(false,errorMsg)
+                return
             }
             
-            if userMdl.userId == "" {
-                callback(false,"自身のユーザ情報がありません[userId=" + userMdl.userId + "]") // ユーザ情報取得失敗
-            }
-            
-            // ユーザタイプの保存
-            let userDM = UserDefaultManager()
-            userDM.setOwnUserType(userType: userMdl.userType)
-            
-            // 2-1.カスタマーだった場合 リクエストしていない場合はスキップ
-            if userMdl.userType == Constant.userTypeCustomer && requestDoctorId != ""{
-                dispatchGroup.enter()
-                DispatchQueue.main.async(group: dispatchGroup) {
-                    // 2-1-1.自身に関わるリクエスト情報を1件取得
-                    self.getRequest(doctorId: requestDoctorId, customerId: userMdl.userId, callback: { (reqMdl, error) in
-                        
-                        if error != "" {
-                            callback(false,error) // リクエスト情報取得失敗
-                            dispatchGroup.leave()
-                            return
-                        }
-                        
-                        if reqMdl.customerId == "" {
-                            callback(false,"リクエストがありません[userId=" + userMdl.userId + "]") // リクエスト情報取得失敗
-                            dispatchGroup.leave()
-                            return
-                        }
-                        
-                        // 2-1-2.リクエスト先の医院情報を1件取得
-                        self.getUserByUserId(userId: reqMdl.doctorId, callback: {
-                            (doctorMdl, gomi, error) in
-                            if error != "" {
-                                callback(false, error) // 医院情報取得失敗
-                            }else if doctorMdl.userId == "" {
-                                callback(false,"リクエスト先の医院情報がありません[userId=" + userId + "]" ) // 医院情報取得失敗
-                            }
-                            dispatchGroup.leave() // 正常終了
-                        })
-                        
-                    })
-                }
-                
-            }
-                // 2-2.医院だった場合
-            else if userMdl.userType == Constant.userTypeDoctor {
-                
-                dispatchGroup.enter()
-                DispatchQueue.global().async(group: dispatchGroup) {
-                    // 2-2-1.自身のリクエスト情報を全て取得
-                    self.getRequestsByDoctorId(doctorId: userMdl.userId, callback:{(reqMdls, error) in
-                        if error != "" {
-                            callback(false,error) // リクエスト情報取得失敗
-                            dispatchGroup.leave()
-                            return
-                        }
-                        // 2-2-2.リクエスト元のカスタマー情報を全て取得
-                        for reqMdl in reqMdls {
-                            self.getUserByUserId(userId: reqMdl.customerId, callback: { (customerMdl, gomi, error) in
-                                if error != "" {
-                                    callback(false, error) // カスタマー情報取得失敗
-                                    dispatchGroup.leave()
-                                    return
-                                }
-                                
-                                if customerMdl.userId == "" {
-                                    callback(false,"リクエスト元のカスタマー情報がありません[userId=" + reqMdl.customerId + "]" ) // カスタマー情報取得失敗
-                                    dispatchGroup.leave()
-                                    return
-                                }
-                            })
-                        }
-                        dispatchGroup.leave()
-                    })
-                }
-            }
-            
-            dispatchGroup.notify(queue: .main) {
-                // 2-3.チャットルームのメッセージ情報を全て取得
-                ChatDataManager().getDataFromDB()
-                
-                // 2-4.スケジュール情報を取得
-                self.setScheduleObserver()
-                self.setKindObserver()
-                self.setKindDetailObserver()
-                callback(true, "")
-            }
+            // 成功
+            self.setScheduleObserver()
+            self.setKindObserver()
+            self.setKindDetailObserver()
+            callback(true, "")
         })
     }
     
     
-    func getRequest(doctorId:String, customerId:String, callback: @escaping (RequestModel, _ error:String)->Void){
-        let ret = RequestModel()
-        var isFinish = false
-        
-        ref.child(Constant.dbRequest + "/" + doctorId + "/" + customerId).observeSingleEvent(of: .value, with: {(snapshot) in
-            if snapshot.exists() {
-                // みつかった
-                let reqFBModel = snapshot.value as! NSDictionary
-                
-                ret.customerId = customerId
-                ret.doctorId = doctorId
-                ret.requestConfirm = reqFBModel[Constant.dbRequestIsConfirm] as! Bool
-                ret.requestDate = DateUtils.dateFromString(reqFBModel[Constant.dbRequestRequestDate] as! String)
-                
-                if ret.requestConfirm {
-                    ret.requestConfirmDate = DateUtils.dateFromString(reqFBModel[Constant.dbRequestConfirmDate] as! String)
-                }
-                _ = RealmManager.getInstance().insertUpdateRequest(ret)
-            }
-            isFinish = true
-            callback(ret, "")
-        })
-        
-        DispatchQueue.global().async() {
-            let group = DispatchGroup()
-            
-            DispatchQueue.global().async(group:group) {
-                while !isFinish {}
-            }
-            
-            let time: DispatchTime = .now() + .seconds(10)
-            if group.wait(timeout:time) == .timedOut {
-                print("timeout" + #function)
-                group.leave()
-                group.notify(queue: .main) {
-                    // タイムアウト時の処理
-                    callback(ret,"タイムアウト")
-                }
-            }
-        }
-    }
-    
-    func getRequestsByDoctorId(doctorId:String, callback: @escaping ([RequestModel], _ error:String)->Void){
-        var ret :[RequestModel] = []
-        
-        var isFinish = false
-        ref.child(Constant.dbRequest + "/" + doctorId).observeSingleEvent(of: .value, with: {(snapshot) in
-            if snapshot.exists() {
-                let userRequests = snapshot.value as! NSDictionary
-                for (customerId, reqFB) in userRequests {
-                    let requestModel = RequestModel()
-                    let reqFBMdl = reqFB as! NSDictionary
-                    requestModel.customerId = customerId as! String
-                    requestModel.doctorId = doctorId
-                    requestModel.requestConfirm = reqFBMdl[Constant.dbRequestIsConfirm] as! Bool
-                    requestModel.requestDate = DateUtils.dateFromString(reqFBMdl[Constant.dbRequestRequestDate] as! String)
-                    if requestModel.requestConfirm {
-                        requestModel.requestConfirmDate = DateUtils.dateFromString(reqFBMdl[Constant.dbRequestConfirmDate] as! String)
-                    }
-                    
-                    // realm保存
-                    _ = RealmManager.getInstance().insertUpdateRequest(requestModel)
-                    
-                    ret.append(requestModel)
-                }
-            }
-            isFinish = true
-            callback(ret, "")
-        })
-        
-        
-        DispatchQueue.global().async() {
-            let group = DispatchGroup()
-            
-            DispatchQueue.global().async(group:group) {
-                while !isFinish {}
-            }
-            
-            let time: DispatchTime = .now() + .seconds(10)
-            if group.wait(timeout:time) == .timedOut {
-                print("timeout" + #function)
-                group.leave()
-                group.notify(queue: .main) {
-                    // タイムアウト時の処理
-                    callback(ret,"タイムアウト")
-                }
-            }
-        }
-    }
-    
-    func getUserByUserId(userId:String, callback: @escaping (UserModel, _ requestDoctorId:String, _ error:String)->Void){
-        print(#function)
-        let ret :UserModel = UserModel()
-        var isFinish = false
-        
-        ref.child(Constant.dbUser + "/" + userId).observeSingleEvent(of: .value, with: {(snapshot) in
-            
-            let imgMG = FBStorageManager()
-            var requestDoctorId = ""
-            
-            if snapshot.exists() {
-                // 見つかった
-                let userFB = snapshot.value as! NSDictionary
-                ret.userId = userId
-                ret.name = userFB[Constant.dbUserName] as! String
-                ret.tel = userFB[Constant.dbUserTel] as! String
-                ret.email = userFB[Constant.dbUserEmail] as! String
-                ret.userType = userFB[Constant.dbUserUsertype] as! String
-                ret.iconImgUpdate = DateUtils.dateFromString(userFB[Constant.dbUserIconimgupdate] as! String)
-                ret.entryDate =  DateUtils.dateFromString(userFB[Constant.dbUserIconimgupdate] as! String)
-                if let status = userFB[Constant.dbUserStatus] as? Int{
-                    ret.status = status
-                }
-                
-                if ret.userType == Constant.userTypeDoctor {
-                    ret.clinicName = userFB[Constant.dbUserClinicName] as! String
-                    ret.clinicAddress = userFB[Constant.dbUserClinicAddress] as! String
-                    ret.topImgUpdate = DateUtils.dateFromString(userFB[Constant.dbUserTopimgupdate] as! String)
-                    imgMG.downLoadImage(fullPath: imgMG.getUserTopImgPath(userId: userId),callback: {(uiImage)->Void in
-                        UserDefaultManager().saveImageTop(userId: userId, uiImage: uiImage)
-                    })
-                } else if ret.userType == Constant.userTypeCustomer {
-                    requestDoctorId = userFB[Constant.dbUserRequestdoctorid] as? String ?? ""
-                }
-                
-                imgMG.downLoadImage(fullPath: imgMG.getUserIconImgPath(userId: userId),callback: {(uiImage)->Void in
-                    UserDefaultManager().saveImageIcon(userId: userId, uiImage: uiImage)
-                })
-                
-                var rooms:[String] = []
-                if let roomsFB = userFB[Constant.dbUserRooms] as? NSDictionary {
-                    for roomId in roomsFB.allKeys {
-                        rooms.append(roomId as! String)
-                        ret.chatRooms.append(roomId as! String)
-                    }
-                }
-                
-                // Realm保存
-                RealmManager.getInstance().insertUpdateUser(userId: ret.userId, userType: ret.userType, name: ret.name, tel: ret.tel, email: ret.email, clinicName: ret.clinicName, clinicAddress: ret.clinicAddress, rooms: rooms, requestDoctorId: requestDoctorId, entryDate: ret.entryDate!,status:ret.status)
-                
-            }
-            isFinish = true
-            callback(ret, requestDoctorId, "")
-        })
-        
-        DispatchQueue.global().async() {
-            let group = DispatchGroup()
-            
-            DispatchQueue.global().async(group:group) {
-                while !isFinish {}
-            }
-            
-            let time: DispatchTime = .now() + .seconds(10)
-            if group.wait(timeout:time) == .timedOut {
-                print("timeout" + #function)
-                group.leave()
-                group.notify(queue: .main) {
-                    // タイムアウト時の処理
-                    callback(UserModel(),"","タイムアウト")
-                }
-            }
-        }
-    }
-    
-//    ref.child(Constant.dbMessage + "/" + roomId).queryOrdered(byChild: Constant.dbMessageEntryDate).queryLimited(toLast: 100).observeSingleEvent
-//    
-    
-    
-    func updateUserStatus(userId:String, status:Int) {
-        ref.child(Constant.dbUserStatus + "/" + userId + "/" + Constant.dbUserStatus).setValue(status.description)
-        
-        RealmManager.getInstance().updateUser(userId: userId, status: status)
-    }
     
     // 医者しか呼び出さない
     func deleteKind(_ kindMdl:CalKindModel){
@@ -566,11 +120,6 @@ class FBRealTimeDataBaseManager {
             return
         }
         
-//        // 医者は自分でハンドリングするのでつけない
-//        if CommonUtils.isUserTypeDoctor(){
-//            return
-//        }
-        
         var customerId = ""
         var doctorId = ""
         
@@ -607,9 +156,11 @@ class FBRealTimeDataBaseManager {
             if let kind = realmDM.getKind(kindId: kindId) {
                 mdl.kind = kind
             } else {
-                let tempKind = CalKindModel()
-                tempKind.kindId = kindId
-                mdl.kind = tempKind
+                if kindId != "" {
+                    let tempKind = CalKindModel()
+                    tempKind.kindId = kindId
+                    mdl.kind = tempKind
+                }
             }
             realmDM.updateInsertScheduleModel(mdl)
         }))
@@ -629,9 +180,11 @@ class FBRealTimeDataBaseManager {
             if let kind = realmDM.getKind(kindId: kindId) {
                 mdl.kind = kind
             } else {
-                let tempKind = CalKindModel()
-                tempKind.kindId = kindId
-                mdl.kind = tempKind
+                if kindId != "" {
+                    let tempKind = CalKindModel()
+                    tempKind.kindId = kindId
+                    mdl.kind = tempKind
+                }
             }
             realmDM.updateInsertScheduleModel(mdl)
         }))
@@ -652,12 +205,6 @@ class FBRealTimeDataBaseManager {
         if isAddObsKind {
             return
         }
-        
-        // 医者は自分でハンドリングするのでつけない
-//        if CommonUtils.isUserTypeDoctor(){
-//            return
-//        }
-        
         
         var customerId = ""
         var doctorId = ""
@@ -700,6 +247,9 @@ class FBRealTimeDataBaseManager {
     
     func updateKindForUser(_ snapshot:DataSnapshot, _ doctorId:String) {
         let kindId = snapshot.key
+        if kindId == "" {
+            return
+        }
         let allCloseFlg = snapshot.childSnapshot(forPath: "allCloseFlg").value as! Bool
         let closeFlg = snapshot.childSnapshot(forPath: "closeFlg").value as! Bool
         
@@ -751,7 +301,7 @@ class FBRealTimeDataBaseManager {
             }
         }
         
-        realmDM.insertKind(mdl)
+        realmDM.insertUpdateKind(mdl)
     }
     
     func setKindDetailObserver() {
@@ -834,5 +384,93 @@ class FBRealTimeDataBaseManager {
         isAddObsSche = false
         isAddObsKind = false
         isAddObsKindDetail = false
+    }
+    
+    // RealmとFirebaseにデフォルト種別登録 医者しか呼ばれない
+    func insertDefaultKind() {
+        let calKindMdl1 = CalKindModel()
+        calKindMdl1.kindId = UUID().uuidString
+        calKindMdl1.kindNum = 1
+        calKindMdl1.doctorId = UserDefaultManager().getOwnUserId()
+        calKindMdl1.allCloseFlg = false
+        
+        // 青
+        calKindMdl1.color_r = 55/255
+        calKindMdl1.color_g = 114/255
+        calKindMdl1.color_b = 255/255
+        calKindMdl1.closeFlg = true
+        
+        let kindOPMdl1 = CalKindOpenCloseModel()
+        kindOPMdl1.opencloseType = "open"
+        kindOPMdl1.num = 0
+        kindOPMdl1.kindId_openclose_num = calKindMdl1.kindId + "_" + "open_" + kindOPMdl1.num.description
+        kindOPMdl1.StartHHmm = String("09:00")
+        kindOPMdl1.EndHHmm = String("17:00")
+        calKindMdl1.open.append(kindOPMdl1)
+        
+        let kindCLMdl1 = CalKindOpenCloseModel()
+        kindCLMdl1.opencloseType = "close"
+        kindCLMdl1.num = 0
+        kindCLMdl1.kindId_openclose_num = calKindMdl1.kindId + "_" + "close_" + kindCLMdl1.num.description
+        kindCLMdl1.StartHHmm = String("12:00")
+        kindCLMdl1.EndHHmm = String("13:00")
+        calKindMdl1.close.append(kindCLMdl1)
+        
+        let calKindMdl2 = CalKindModel()
+        calKindMdl2.kindId = UUID().uuidString
+        calKindMdl2.kindNum = 2
+        calKindMdl2.doctorId = UserDefaultManager().getOwnUserId()
+        calKindMdl2.allCloseFlg = false
+        // 緑
+        calKindMdl2.color_r = 162/255
+        calKindMdl2.color_g = 255/255
+        calKindMdl2.color_b = 163/255
+        calKindMdl2.closeFlg = false
+        
+        let kindOPMdl2 = CalKindOpenCloseModel()
+        kindOPMdl2.opencloseType = "open"
+        kindOPMdl2.num = 0
+        kindOPMdl2.kindId_openclose_num = calKindMdl2.kindId + "_" + "open_" + kindOPMdl2.num.description
+        kindOPMdl2.StartHHmm = String("09:00")
+        kindOPMdl2.EndHHmm = String("12:00")
+        calKindMdl2.open.append(kindOPMdl2)
+        
+        let calKindMdl3 = CalKindModel()
+        calKindMdl3.kindId = UUID().uuidString
+        calKindMdl3.kindNum = 3
+        calKindMdl3.doctorId = UserDefaultManager().getOwnUserId()
+        calKindMdl3.allCloseFlg = false
+        // 黄
+        calKindMdl3.color_r = 255/255
+        calKindMdl3.color_g = 253/255
+        calKindMdl3.color_b = 152/255
+        calKindMdl3.closeFlg = false
+        
+        let kindOPMdl3 = CalKindOpenCloseModel()
+        kindOPMdl3.opencloseType = "open"
+        kindOPMdl3.num = 0
+        kindOPMdl3.kindId_openclose_num = calKindMdl3.kindId + "_" + "open_" + kindOPMdl3.num.description
+        kindOPMdl3.StartHHmm = String("13:00")
+        kindOPMdl3.EndHHmm = String("17:00")
+        calKindMdl3.open.append(kindOPMdl3)
+        
+        
+        let calKindMdl4 = CalKindModel()
+        calKindMdl4.kindId = UUID().uuidString
+        calKindMdl4.kindNum = 4
+        calKindMdl4.doctorId = UserDefaultManager().getOwnUserId()
+        calKindMdl4.allCloseFlg = true
+        // 茶
+        calKindMdl4.color_r = 244/255
+        calKindMdl4.color_g = 85/255
+        calKindMdl4.color_b = 85/255
+        calKindMdl4.closeFlg = true
+        
+        // 登録
+        let realmM = RealmManager.getInstance()
+        realmM.insertUpdateKind(calKindMdl1)
+        realmM.insertUpdateKind(calKindMdl2)
+        realmM.insertUpdateKind(calKindMdl3)
+        realmM.insertUpdateKind(calKindMdl4)
     }
 }

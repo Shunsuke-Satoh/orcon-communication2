@@ -74,6 +74,7 @@ class ChatReserveCell: UITableViewCell {
             pmBtn.backgroundColor = nonSelectedColor
         }
     }
+    
 }
 
 protocol ChatReserveCellDelegate {

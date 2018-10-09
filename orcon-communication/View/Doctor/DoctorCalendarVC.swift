@@ -25,6 +25,8 @@ class DoctorCalendarViewController: UIViewController ,FSCalendarDelegate ,FSCale
     @IBOutlet weak var stack2: UIStackView!
     @IBOutlet weak var stack3: UIStackView!
     @IBOutlet weak var stack4: UIStackView!
+    @IBOutlet weak var leftArrowBtn: UIButton!
+    @IBOutlet weak var rightArrowBtn: UIButton!
     
     var stacks: [UIStackView] = []
     var lbls: [UILabel] = []
@@ -34,13 +36,19 @@ class DoctorCalendarViewController: UIViewController ,FSCalendarDelegate ,FSCale
     var schedule: [ScheduledDateModel] = []
     var isEdited = false
     
+    var rightBarBtn: UIBarButtonItem!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        FBRealTimeDataBaseManager.getInstance().removeScheduleKindDetailObserves()
+    FBRealTimeDataBaseManager.getInstance().removeScheduleKindDetailObserves()
 
         // デリゲートの設定
         self.calendar.dataSource = self
         self.calendar.delegate = self
+        
+        rightBarBtn = UIBarButtonItem(title: "診療日種別の設定 >", style: .plain, target: self, action: #selector(DoctorCalendarViewController.tappedNextBtn))
+        navigationItem.title = "診療日の設定"
+        navigationItem.rightBarButtonItem = rightBarBtn
         
     }
     
@@ -102,6 +110,15 @@ class DoctorCalendarViewController: UIViewController ,FSCalendarDelegate ,FSCale
         
         calendar.reloadData()
         self.view.layoutIfNeeded()
+    }
+    @IBAction func left(_ sender: Any) {
+        let date = Calendar.current.date(byAdding: .month, value: -1, to: calendar.currentPage)
+        calendar.setCurrentPage(date! , animated: true)
+        
+    }
+    @IBAction func right(_ sender: Any) {
+        let date = Calendar.current.date(byAdding: .month, value: +1, to: calendar.currentPage)
+        calendar.setCurrentPage(date! , animated: true)
     }
     
     override func didReceiveMemoryWarning() {
@@ -247,6 +264,20 @@ class DoctorCalendarViewController: UIViewController ,FSCalendarDelegate ,FSCale
     
     // 土日の色を変える
     func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, titleDefaultColorFor date: Date) -> UIColor?{
+        
+        // 画面上に保持している全スケジュールから表示しようとしているスケジュールがあるか調べる
+        let dayYYYYMMdd = DateUtils.stringYYYYMMddFromDate(date)
+        if let mdl = schedule.filter({scheMdl -> Bool in
+            return scheMdl.id_yyyymmdd == dayYYYYMMdd
+            
+        }).first {
+            // 見つかれば色を返す
+            if mdl.kind != nil {
+                return UIColor.white
+            }
+        }
+        
+        
         if self.judgeHoliday(date){
             return UIColor.red
         }
@@ -290,7 +321,7 @@ class DoctorCalendarViewController: UIViewController ,FSCalendarDelegate ,FSCale
     }
     func setBorder(index:Int, flag:Bool){
         if flag {
-            imgs[index].layer.borderColor = UIColor.red.cgColor
+            imgs[index].layer.borderColor = UIColor.lightGray.cgColor
             imgs[index].layer.borderWidth = 10
         } else {
             imgs[index].layer.borderColor = UIColor.white.cgColor
@@ -298,6 +329,33 @@ class DoctorCalendarViewController: UIViewController ,FSCalendarDelegate ,FSCale
         }
     }
     // MARK: - Navigation
+    
+    @objc func tappedNextBtn() {
+        if isEdited {
+            // ポップアップを準備
+            let appearance = SCLAlertView.SCLAppearance(
+                showCloseButton:false
+            )
+            
+            let confV = SCLAlertView(appearance: appearance)
+            
+            // 破棄ボタン
+            confV.addButton("はい"){
+                confV.dismiss(animated: true, completion: {})
+                self.next()
+            }
+            
+            // キャンセルボタン
+            confV.addButton("いいえ"){
+                confV.dismiss(animated: true, completion: {})
+            }
+            
+            // ダイアログ表示
+            confV.showNotice("更新されていない編集があります", subTitle: "現在の編集を破棄して移動しますか？")
+        } else{
+            next()
+        }
+    }
     // 次画面への遷移時に編集されてたら破棄確認ダイアログを出す
     @IBAction func nextBtn(_ sender: UIBarButtonItem) {
         if isEdited {

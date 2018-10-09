@@ -17,6 +17,19 @@ class ChatRoomModel: Object {
     override static func primaryKey() -> String? {
         return "roomId"
     }
+    
+    func copyModel() -> ChatRoomModel {
+        let mdl = ChatRoomModel()
+        mdl.roomId = roomId
+        mdl.otherUser = otherUser
+        mdl.lastDate = lastDate
+        for msg in messages {
+            mdl.messages.append(msg)
+        }
+        
+        return mdl
+    }
+    
 }
 
 class UserModel: Object {
@@ -24,6 +37,7 @@ class UserModel: Object {
     @objc dynamic var userId = ""
     @objc dynamic var userType = ""
     @objc dynamic var name = ""
+    @objc dynamic var hira = ""
     @objc dynamic var tel = ""
     @objc dynamic var email = ""
     @objc dynamic var clinicName = ""
@@ -32,22 +46,44 @@ class UserModel: Object {
     @objc dynamic var iconImgUpdate: Date?
     @objc dynamic var entryDate: Date?
     @objc dynamic var status = 0
-    @objc dynamic var token = ""
+    @objc dynamic var deleteDate: Date?
+    @objc dynamic var requestDoctorId = ""
     let chatRooms = List<String>()
     
     override static func primaryKey() -> String? {
         return "userId"
     }
+    
+    func copyModel() -> UserModel {
+        let mdl = UserModel()
+        mdl.userId = userId
+        mdl.userType = userType
+        mdl.name = name
+        mdl.hira = hira
+        mdl.email = email
+        mdl.clinicName = clinicName
+        mdl.clinicAddress = clinicAddress
+        mdl.topImgUpdate = topImgUpdate
+        mdl.iconImgUpdate = iconImgUpdate
+        mdl.entryDate = entryDate
+        mdl.status = status
+        mdl.deleteDate = deleteDate
+        mdl.requestDoctorId = requestDoctorId
+        for room in chatRooms {
+            mdl.chatRooms.append(room)
+        }
+        
+        return mdl
+    }
 }
 
 class MessageModel: Object{
     let chatRoom = LinkingObjects(fromType: ChatRoomModel.self, property:"messages")
+    @objc dynamic var messageId = ""
     @objc dynamic var messageType = ""
     @objc dynamic var contents = ""
     @objc dynamic var senderId = ""
     @objc dynamic var entryDate = Date()
-    @objc dynamic var messageNum = 0
-    @objc dynamic var messageId = ""
     @objc dynamic var read = false
     
     override static func primaryKey() -> String? {

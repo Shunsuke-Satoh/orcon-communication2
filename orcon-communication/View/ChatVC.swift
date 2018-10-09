@@ -40,7 +40,9 @@ class ChatViewController: MessagesViewController, UIImagePickerControllerDelegat
         
         super.viewDidLoad()
         
-        ChatDataManager.getInstance().delegateMsg = self
+        ChatDataManager.getInstance().delegate = self
+        FBUserManager.getInstance().delegateImg = self
+        FBUserManager.getInstance().delegate = self
         
         // roomIdから Realm、UserDefaultから相手のアイコン、ユーザID、名前を格納
         chatRoomModel = realmManager.getChatRoomModelByRoomId(roomId: roomId!)
@@ -58,6 +60,15 @@ class ChatViewController: MessagesViewController, UIImagePickerControllerDelegat
                 
                 // 他者の未読の数を数えてバッジを更新
                 CommonUtils.setBadge()
+                
+                if self.otherUserModel != nil {
+                    if CommonUtils.isUserTypeDoctor() {
+                        self.navigationItem.title = self.otherUserModel!.name + " とのトーク"
+                    }
+                    else if CommonUtils.isUserTypeUser() {
+                        self.navigationItem.title = self.otherUserModel!.clinicName + " とのトーク"
+                    }
+                }
             }
         }
         
@@ -109,7 +120,7 @@ class ChatViewController: MessagesViewController, UIImagePickerControllerDelegat
         
         // 既読更新
         if !msgModel.read && msgModel.senderId != userDM.getOwnUserId() {
-            fbRDBM.updateRead(roomId: roomId!, messageModel: msgModel)
+            ChatDataManager.getInstance().updateRead(roomId: roomId!, messageModel: msgModel)
             realmManager.updateMessageRead(msg:msgModel)
         }
         
@@ -260,7 +271,7 @@ class ChatViewController: MessagesViewController, UIImagePickerControllerDelegat
                 
                 if isSuccess {
                     // FireBaseに保存
-                    self.fbRDBM.uploadMessage(roomId: self.roomId!, messageModel: messageModel)
+                    ChatDataManager.getInstance().uploadMessage(roomId: self.roomId!, messageModel: messageModel)
                     
                     let topicName = CommonUtils.getChatTopicName(roomId: self.roomId!)
                     CommonUtils.postDataMessage(topicName: topicName, title: self.currentSender().displayName + " からのメッセージ", body: "画像のメッセージ", callback: {_ in})
@@ -274,7 +285,7 @@ class ChatViewController: MessagesViewController, UIImagePickerControllerDelegat
             })
         } else {
             // FireBaseに保存
-            self.fbRDBM.uploadMessage(roomId: self.roomId!, messageModel: messageModel)
+            ChatDataManager.getInstance().uploadMessage(roomId: self.roomId!, messageModel: messageModel)
             callback(true)
         }
     }
@@ -336,7 +347,8 @@ extension ChatViewController: MessagesDataSource {
         
         let dateString = formatter.string(from: message.sentDate)
         var readString = "未読   "
-        if (realmManager.getMessage(msgId: message.messageId)?.read)! {
+        let msgMdl = realmManager.getMessage(msgId: message.messageId)!
+        if msgMdl.read {
             readString = "既読   "
         }
         
@@ -344,44 +356,46 @@ extension ChatViewController: MessagesDataSource {
     }
 }
 
-extension ChatViewController: MessageLoadDelegate{
+extension ChatViewController: MessageDelegate{
     
     // 相手メッセージの一件追加
     func messageUpdated(msgModel:MessageModel) {
-        print("START " + #function)
         
-        if let topViewController = UIApplication.shared.keyWindow?.rootViewController as? UINavigationController{
-            
-            if (topViewController.topViewController as? ChatViewController?) != nil {
-                print("DELEGATE " + #function)
-                // 既読更新
-                fbRDBM.updateRead(roomId: roomId!, messageModel: msgModel)
-                realmManager.updateMessageRead(msg: msgModel)
-                var mockMsg:MockMessage?
-                if msgModel.messageType == Constant.msgTypeText {
-                    let attributedText = NSAttributedString(string: msgModel.contents, attributes: [.font: UIFont.systemFont(ofSize: 15), .foregroundColor: UIColor.white])
-                    mockMsg = MockMessage(attributedText: attributedText, sender: otherSender(),messageId: msgModel.messageId, date: msgModel.entryDate, isRead: msgModel.read)
-                } else {
-                    var image = userDM.getImageForMessage(messageId: msgModel.messageId)
-                    
-                    if image == nil {
-                        image = UIImage()
-                    }
-                    
-                    mockMsg = MockMessage(image: image!, sender: otherSender(), messageId: msgModel.messageId, date: msgModel.entryDate, isRead:msgModel.read)
+//        if let topViewController = UIApplication.shared.keyWindow?.rootViewController as? UINavigationController{
+//
+//            if (topViewController.topViewController as? ChatViewController?) != nil {
+            // 既読更新
+            realmManager.updateMessageRead(msg: msgModel)
+    
+    
+            var mockMsg:MockMessage?
+            if msgModel.messageType == Constant.msgTypeText {
+                let attributedText = NSAttributedString(string: msgModel.contents, attributes: [.font: UIFont.systemFont(ofSize: 15), .foregroundColor: UIColor.white])
+                mockMsg = MockMessage(attributedText: attributedText, sender: otherSender(),messageId: msgModel.messageId, date: msgModel.entryDate, isRead: msgModel.read)
+            } else {
+                var image = userDM.getImageForMessage(messageId: msgModel.messageId)
+                
+                if image == nil {
+                    image = UIImage()
                 }
                 
-                messageList.append(mockMsg!)
-                messagesCollectionView.insertSections([messageList.count - 1])
-                messagesCollectionView.scrollToBottom()
-                
-                
+                mockMsg = MockMessage(image: image!, sender: otherSender(), messageId: msgModel.messageId, date: msgModel.entryDate, isRead:msgModel.read)
             }
-        }
+        
+            messageList.append(mockMsg!)
+            messagesCollectionView.insertSections([messageList.count - 1])
+            messagesCollectionView.scrollToBottom()
+        // 既読更新　少し遅らせることで相手に反映させる
+        ChatDataManager.getInstance().updateRead(roomId: roomId!, messageModel: msgModel)
+                
+//            }
+//        }
     }
     
     // 自分のメッセージが既読になる
     func messageReaded(msgModel: MessageModel) {
+        
+        messageModelList = RealmManager.getInstance().getMessagesByRoomId(roomId:roomId!)
         if msgModel.senderId == userDM.getOwnUserId() {
             for (i,mockMsg) in messageList.enumerated() {
                 if mockMsg.messageId == msgModel.messageId {
@@ -398,13 +412,10 @@ extension ChatViewController: MessageLoadDelegate{
                         
                         newMockMsg = MockMessage(image: image!, sender: currentSender(), messageId: msgModel.messageId, date: msgModel.entryDate, isRead:msgModel.read)
                     }
+                    
                     messageList[i] = newMockMsg!
                     self.messagesCollectionView.reloadData()
-                }
-            }
-            for msg in messageModelList {
-                if msg.messageId == msgModel.messageId {
-                    msg.read = msgModel.read
+
                 }
             }
         }
@@ -415,7 +426,11 @@ extension ChatViewController: MessageLoadDelegate{
 extension ChatViewController: MessagesDisplayDelegate {
     // メッセージの色を変更（デフォルトは自分：白、相手：黒）
     func textColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
-        return isFromCurrentSender(message: message) ? .white : .darkText
+        if message.sender.id == userDM.getOwnUserId() {
+            return .white
+        }
+        return .darkText
+//        return isFromCurrentSender(message: message) ? .white : .darkText
     }
     
     // メッセージの背景色を変更している（デフォルトは自分：みどり、相手：グレー）
@@ -523,8 +538,8 @@ extension ChatViewController: MessageInputBarDelegate {
                 let attributedText = NSAttributedString(string: text, attributes: [.font: UIFont.systemFont(ofSize: 15),
                                                                                    .foregroundColor: UIColor.white])
                 let message = MockMessage(attributedText: attributedText, sender: currentSender(),messageId: roomId! + "_" + UUID().uuidString, date: Date(), isRead:false)
-                
                 saveMessage(mockMsg: message, msgType: Constant.msgTypeText, callback:{_ in})
+                
                 messageList.append(message)
                 messagesCollectionView.insertSections([messageList.count - 1])
                 
@@ -532,8 +547,8 @@ extension ChatViewController: MessageInputBarDelegate {
                 CommonUtils.postDataMessage(topicName: topicName, title: currentSender().displayName + " からのメッセージ", body: text, callback: {_ in})
             }
         }
-        inputBar.inputTextView.text = String()
         messagesCollectionView.scrollToBottom()
+        inputBar.inputTextView.text = String()
     }
 }
 
@@ -545,4 +560,18 @@ fileprivate func convertFromUIImagePickerControllerInfoKeyDictionary(_ input: [U
 // Helper function inserted by Swift 4.2 migrator.
 fileprivate func convertFromUIImagePickerControllerInfoKey(_ input: UIImagePickerController.InfoKey) -> String {
 	return input.rawValue
+}
+
+extension ChatViewController: FBUserManagerImageDelegate, FBUserManagerDelegate {
+    func compTopImg(userId: String) {
+        self.messagesCollectionView.reloadData()
+    }
+    
+    func compIconImg(userId: String) {
+        self.messagesCollectionView.reloadData()
+    }
+    
+    func userUpdated(userModel: UserModel) {
+        self.messagesCollectionView.reloadData()    }
+    
 }

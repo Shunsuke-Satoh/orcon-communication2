@@ -10,21 +10,18 @@ import UIKit
 import SwiftCop
 import RSKImageCropper
 import SCLAlertView
+import TextFieldEffects
 
 class AcountEntryViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate{
     
     @IBOutlet weak var nameTxtF: UITextField!
+    @IBOutlet weak var hiraTxtF: UITextField!
     @IBOutlet weak var telTxtF: UITextField!
     @IBOutlet weak var emailTxtF: UITextField!
     @IBOutlet weak var passwordTxtF: UITextField!
     @IBOutlet weak var clinicNameTxtF: UITextField!
     @IBOutlet weak var clinicAddressTxtF: UITextField!
     @IBOutlet weak var termConfirmChkB: UISwitch!
-    @IBOutlet weak var nameLbl: UILabel!
-    @IBOutlet weak var telLbl: UILabel!
-    @IBOutlet weak var emailLbl: UILabel!
-    @IBOutlet weak var passwordLbl: UILabel!
-    @IBOutlet weak var clinicNameLbl: UILabel!
     @IBOutlet weak var confirmLbl: UILabel!
     
     @IBOutlet weak var confirm: UIButton!
@@ -32,17 +29,11 @@ class AcountEntryViewController: UIViewController, UIImagePickerControllerDelega
     
     @IBOutlet weak var topImgView: UIImageView!
     @IBOutlet weak var iconImgView: UIImageView!
-    @IBOutlet weak var clinicNameSVConst: NSLayoutConstraint!
-    @IBOutlet weak var clinicAddressSVConst: NSLayoutConstraint!
-    @IBOutlet weak var topImgTitleLblConst: NSLayoutConstraint!
-    @IBOutlet weak var topImgConst: NSLayoutConstraint!
-    
-    @IBOutlet weak var scrollContentView: NSLayoutConstraint!
     
     @IBOutlet weak var termStack: UIStackView!
     
     var userType = ""
-    var swiftCop :SwiftCop?
+    var swiftCop :SwiftCop!
     
     var topOrIcon = "top"
     
@@ -61,11 +52,6 @@ class AcountEntryViewController: UIViewController, UIImagePickerControllerDelega
         clinicNameTxtF.delegate = self
         clinicAddressTxtF.delegate = self
         // 入力フォームのアラート初期化
-        nameLbl.text = ""
-        telLbl.text = ""
-        emailLbl.text = ""
-        passwordLbl.text = ""
-        clinicNameLbl.text = ""
         confirmLbl.text = ""
         
         // ボタンの見た目
@@ -77,19 +63,21 @@ class AcountEntryViewController: UIViewController, UIImagePickerControllerDelega
         confirm.layer.shadowOffset = CGSize(width:2,height:2)
         
         // 入力フォームのバリデーション
-        swiftCop?.addSuspect(Suspect(view: nameTxtF, sentence: "入力必須です。", trial: Trial.length(.minimum, 1)))
-        swiftCop?.addSuspect(Suspect(view: telTxtF, sentence: "入力必須です。", trial: Trial.length(.minimum, 1)))
-        swiftCop?.addSuspect(Suspect(view: emailTxtF, sentence: "入力必須です。", trial: Trial.length(.minimum, 1)))
-        swiftCop?.addSuspect(Suspect(view: emailTxtF, sentence: "形式が不正です。", trial: Trial.email))
-        swiftCop?.addSuspect(Suspect(view: passwordTxtF, sentence: "8文字以上の入力が必須です。", trial: Trial.length(.minimum, 8)))
+        swiftCop.addSuspect(Suspect(view: nameTxtF, sentence: "入力必須です。", trial: Trial.length(.minimum, 1)))
+        swiftCop.addSuspect(Suspect(view: hiraTxtF, sentence: "入力必須です。", trial: Trial.length(.minimum, 1)))
+        swiftCop.addSuspect(Suspect(view: telTxtF, sentence: "入力必須です。", trial: Trial.length(.minimum, 1)))
+        swiftCop.addSuspect(Suspect(view: emailTxtF, sentence: "入力必須です。", trial: Trial.length(.minimum, 1)))
+        swiftCop.addSuspect(Suspect(view: emailTxtF, sentence: "形式が不正です。", trial: Trial.email))
+        swiftCop.addSuspect(Suspect(view: passwordTxtF, sentence: "8文字以上の入力が必須です。", trial: Trial.length(.minimum, 8)))
+        
         
         if userType == Constant.userTypeDoctor {
-            swiftCop?.addSuspect(Suspect(view: clinicNameTxtF, sentence: "入力必須です。", trial: Trial.length(.minimum, 1)))
+            swiftCop.addSuspect(Suspect(view: clinicNameTxtF, sentence: "入力必須です。", trial: Trial.length(.minimum, 1)))
         }else {
-            clinicNameSVConst.constant = 0
-            clinicAddressSVConst.constant = 0
-            topImgTitleLblConst.constant = 0
-            topImgConst.constant = 0
+            clinicNameTxtF.isHidden = true
+            clinicAddressTxtF.isHidden = true
+            topImgsTitleLbl.isHidden = true
+            topImgView.isHidden = true
 //            scrollContentView.constant = view.frame.height
 //            scrollContentView.constant = confirm.bounds.maxY + 40
         }
@@ -121,11 +109,14 @@ class AcountEntryViewController: UIViewController, UIImagePickerControllerDelega
         
         // 初期設定
         nameTxtF.text = userMdl?.name
+        hiraTxtF.text = userMdl?.hira
         telTxtF.text = userMdl?.tel
         emailTxtF.text = userMdl?.email
         emailTxtF.isEnabled = false
+        emailTxtF.backgroundColor = UIColor.lightGray
         passwordTxtF.text = userDM.getOwnPassword()
         passwordTxtF.isEnabled = false
+        passwordTxtF.backgroundColor = UIColor.lightGray
         clinicNameTxtF.text = userMdl?.clinicName
         clinicAddressTxtF.text = userMdl?.clinicAddress
         iconImgView.image = userDM.loadImageForOwnIcon()
@@ -145,30 +136,42 @@ class AcountEntryViewController: UIViewController, UIImagePickerControllerDelega
         // Dispose of any resources that can be recreated.
     }
     // 各フィールドが編集される都度、バリデーション
-    @IBAction func validateName(_ sender: UITextField) {
-        nameLbl.text = swiftCop?.isGuilty(sender)?.verdict()
+    @IBAction func changeName(_ sender: UITextField) {
+        sender.placeholder = "お名前" + "    " + validateAndSetColor(sender as! HoshiTextField)
     }
-    
-    @IBAction func validateTel(_ sender: UITextField) {
-        telLbl.text = swiftCop?.isGuilty(sender)?.verdict()
+    @IBAction func changeHira(_ sender: UITextField) {
+        sender.placeholder = "おなまえ（平仮名）" + "    " + validateAndSetColor(sender as! HoshiTextField)
     }
-    
-    @IBAction func validateEmail(_ sender: UITextField) {
-        emailLbl.text = swiftCop?.isGuilty(sender)?.verdict()
+    @IBAction func changeTel(_ sender: UITextField) {
+        sender.placeholder = "電話番号" + "    " + validateAndSetColor(sender as! HoshiTextField)
     }
-    @IBAction func validateEmail2(_ sender: UITextField) {
-        emailLbl.text = swiftCop?.isGuilty(sender)?.verdict()
+    @IBAction func changeEmail(_ sender: UITextField) {
+        sender.placeholder = "メールアドレス" + "    " + validateAndSetColor(sender as! HoshiTextField)
     }
-    
-    @IBAction func validatePassword(_ sender: UITextField) {
-        passwordLbl.text = swiftCop?.isGuilty(sender)?.verdict()
+    @IBAction func changePassword(_ sender: UITextField) {
+        sender.placeholder = "パスワード" + "    " + validateAndSetColor(sender as! HoshiTextField)
     }
-    
-    @IBAction func validateClinicName(_ sender: UITextField) {
-        clinicNameLbl.text = swiftCop?.isGuilty(sender)?.verdict()
+    @IBAction func changeClinicName(_ sender: UITextField) {
+        sender.placeholder = "医院名" + "    " + validateAndSetColor(sender as! HoshiTextField)
     }
     @IBAction func validateTerm(_ sender: UISwitch) {
         validateTermImpl(sender)
+    }
+    
+    // バリデーションしてついでに色を変える
+    func validateAndSetColor(_ txtField: HoshiTextField) -> String {
+        var validStr = ""
+        
+        if let validSus = swiftCop.isGuilty(txtField) {
+            validStr = validSus.verdict()
+            txtField.borderActiveColor = UIColor.red
+            txtField.placeholderColor = UIColor.red
+        } else {
+            txtField.borderActiveColor = UIColor(red: 0, green: 122/255, blue: 255/255, alpha: 1)
+            txtField.placeholderColor = UIColor(red: 0, green: 122/255, blue: 255/255, alpha: 1)
+        }
+        
+        return validStr
     }
     
     func validateTermImpl(_ sender: UISwitch) -> Void{
@@ -194,7 +197,7 @@ class AcountEntryViewController: UIViewController, UIImagePickerControllerDelega
         picker?.sourceType = UIImagePickerController.SourceType.photoLibrary
         
         picker?.navigationBar.barTintColor = UIColor.lightGray
-        picker?.navigationBar.tintColor = UIColor.black
+        picker?.navigationBar.tintColor = UIColor.white
         
         present(picker!, animated: true, completion: nil)
     }
@@ -235,6 +238,39 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
         self.dismiss(animated: true, completion: nil)
     }
     
+    // 利用規約の表示
+    @IBAction func tapTerm(_ sender: Any) {
+        let url = URL(string: "https://orcon-web.com/term/")
+        if UIApplication.shared.canOpenURL(url!){
+            commonPopUp(url: url!)
+        }
+    }
+    func commonPopUp(url:URL) {
+        
+        // ポップアップを準備
+        let appearance = SCLAlertView.SCLAppearance(
+            showCloseButton:false
+        )
+        
+        let confV = SCLAlertView(appearance: appearance)
+        
+        // ブラウザボタン
+        confV.addButton("はい"){
+            confV.dismiss(animated: true, completion: {})
+            if UIApplication.shared.canOpenURL(url){
+                UIApplication.shared.open(url, options:[:], completionHandler: nil)
+            }
+        }
+        
+        // キャンセルボタン
+        confV.addButton("いいえ"){
+            confV.dismiss(animated: true, completion: {})
+        }
+        
+        // ダイアログ表示
+        confV.showNotice("確認", subTitle: "ブラウザで外部リンクを開きます")
+    }
+    
     // キーボード隠す
     @IBAction func tapAny(_ sender: UITapGestureRecognizer) {
         self.view.endEditing(true)
@@ -243,7 +279,14 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
         
         // 入力チェック
         if !validate() {
-            let alertV = SCLAlertView()
+            let appearance = SCLAlertView.SCLAppearance(
+                showCloseButton:false
+            )
+            
+            let alertV = SCLAlertView(appearance: appearance)
+            alertV.addButton("閉じる"){
+                alertV.dismiss(animated: true, completion: {})
+            }
             alertV.showWarning("エラー", subTitle: "入力に誤りがあります")
             return
         }
@@ -262,37 +305,50 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
             
             // 確認ボタン
             confV.addButton("はい"){
-                let fbRTDM = FBRealTimeDataBaseManager.getInstance()
                 let imgM = FBStorageManager()
                 let realmDM = RealmManager.getInstance()
                 let userDM = UserDefaultManager()
                 
                 // Realmに保存
-                realmDM.updateUser(userId: userDM.getOwnUserId(), name: self.nameTxtF.text!, tel: self.telTxtF.text!, clinicName: self.clinicNameTxtF.text!, clinicAddress: self.clinicAddressTxtF.text!, iconImgUpdate: Date(), topImgUpdate: Date())
+                let userMdl = realmDM.getUserModelByUserId(userId: userDM.getOwnUserId())!.copyModel()
+                
+                userMdl.name = self.nameTxtF.text!
+                userMdl.hira = self.hiraTxtF.text!
+                userMdl.tel = self.telTxtF.text!
+                userMdl.iconImgUpdate = Date()
+                
+                if CommonUtils.isUserTypeDoctor() {
+                    userMdl.clinicName = self.clinicNameTxtF.text!
+                    userMdl.clinicAddress = self.clinicAddressTxtF.text!
+                    userMdl.topImgUpdate = Date()
+                }
+                
+                realmDM.updateUser(userMdl)
                 
                 // UserDefaultに保存 トップ、アイコン
                 userDM.saveImageForOwnIcon(uiImage: self.iconImgView.image!)
                 
-                if self.userType == Constant.userTypeDoctor {
+                if CommonUtils.isUserTypeDoctor() {
                     userDM.saveImageForOwnTop(uiImage: self.topImgView.image!)
                 }
                 
-                // ユーザ情報をアップロード
-                let userMdl = realmDM.getUserModelByUserId(userId: userDM.getOwnUserId())!
-                fbRTDM.updateUserAndDoctor(userMdl: userMdl)
-                
                 // 画像データをアップロード トップ、アイコン
-                if self.userType == Constant.userTypeDoctor {
+                if CommonUtils.isUserTypeDoctor() {
                     imgM.upLoadImage(img: self.topImgView.image!, uid: userMdl.userId, mode: Constant.storageImgModeTOP, completion:  {(isSuccess)-> Void in
-                        // 失敗した時どうする？
-                        // ユーザ設定画面から再設定してもらうか
+                        
+                        imgM.upLoadImage(img: self.iconImgView.image!, uid: userMdl.userId, mode: Constant.storageImgModeICON, completion:  {(isSuccess)-> Void in
+                            // ユーザ情報をアップロード
+                            FBUserManager.getInstance().updateUserAndDoctor(userMdl: userMdl)
+                        })
                     })
                 }
-                
-                imgM.upLoadImage(img: self.iconImgView.image!, uid: userMdl.userId, mode: Constant.storageImgModeICON, completion:  {(isSuccess)-> Void in
-                    // 失敗した時どうする？
-                    // ユーザ設定画面から再設定してもらうか
-                })
+                else if CommonUtils.isUserTypeUser() {
+                    // 画像データをアップロード トップ、アイコン
+                    imgM.upLoadImage(img: self.iconImgView.image!, uid: userMdl.userId, mode: Constant.storageImgModeICON, completion:  {(isSuccess)-> Void in
+                        // ユーザ情報をアップロード
+                        FBUserManager.getInstance().updateUserAndDoctor(userMdl: userMdl)
+                    })
+                }
                 
                 confV.dismiss(animated: true, completion: {})
                 
@@ -320,30 +376,32 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
     }
     
     func validate() -> Bool{
-        self.nameLbl.text = swiftCop?.isGuilty(self.nameTxtF)?.verdict()
-        self.telLbl.text = swiftCop?.isGuilty(self.telTxtF)?.verdict()
-        self.emailLbl.text = swiftCop?.isGuilty(self.emailTxtF)?.verdict()
-        self.passwordLbl.text = swiftCop?.isGuilty(self.passwordTxtF)?.verdict()
+        nameTxtF.placeholder = "お名前" + "    " + validateAndSetColor(nameTxtF as! HoshiTextField)
+        
+        hiraTxtF.placeholder = "おなまえ（平仮名）" + "    " + validateAndSetColor(hiraTxtF as! HoshiTextField)
+        
+        telTxtF.placeholder = "電話番号" + "    " + validateAndSetColor(telTxtF as! HoshiTextField)
+
+        emailTxtF.placeholder = "メールアドレス" + "    " + validateAndSetColor(emailTxtF as! HoshiTextField)
+        
+        passwordTxtF.placeholder = "パスワード" + "    " + validateAndSetColor(passwordTxtF as! HoshiTextField)
+        
         if userType == Constant.userTypeDoctor {
-            self.clinicNameLbl.text = swiftCop?.isGuilty(self.clinicNameTxtF)?.verdict()
+            clinicNameTxtF.placeholder = "医院名" + "    " + validateAndSetColor(clinicNameTxtF as! HoshiTextField)
         }
         
         if UserDefaultManager().getOwnUserId() == ""{
             validateTermImpl(termConfirmChkB)
         }
         
-        let name = self.nameLbl.text ?? ""
-        let tel = self.telLbl.text ?? ""
-        let email = self.emailLbl.text ?? ""
-        let clinicName = self.clinicNameLbl.text ?? ""
-        let confirmtmp = self.confirmLbl.text ?? ""
-        let allWarn = name + tel + email + clinicName + confirmtmp
+        // 全量バリデーション
+        let confirmtmp = self.confirmLbl.text!
         
-        if allWarn.count > 0{
-            return false
+        if swiftCop.allGuilties().count == 0 && confirmtmp == "" {
+            return true
         }
         
-        return true
+        return false
     }
     
     // 次画面への情報渡し
@@ -353,6 +411,7 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
             
             confirmController.userType = userType
             confirmController.name = nameTxtF.text!
+            confirmController.hira = hiraTxtF.text!
             confirmController.email = emailTxtF.text!
             confirmController.password = passwordTxtF.text!
             confirmController.clinicName = clinicNameTxtF.text!

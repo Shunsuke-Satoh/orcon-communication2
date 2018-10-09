@@ -10,7 +10,7 @@ import RealmSwift
 
 class RealmManager {
     static var own: RealmManager?
-    static var config = Realm.Configuration(schemaVersion: 12)
+    static var config = Realm.Configuration(schemaVersion: 13)
     
     var userDM: UserDefaultManager?
     static let INSERT = 0
@@ -65,6 +65,101 @@ class RealmManager {
         }
         
         return ret
+    }
+    // 自分以外のユーザ情報を全て取得する
+    func getUserModelsExceptOwn() -> [UserModel] {
+        var ret :[UserModel] = []
+        
+        do {
+            let ownId = UserDefaultManager().getOwnUserId()
+            let realm = try Realm(configuration:RealmManager.config)
+            let mdls = realm.objects(UserModel.self)
+            for mdl in mdls {
+                if mdl.userId != ownId {
+                    ret.append(mdl)
+                }
+            }
+            
+        } catch {
+            print("ERROR at")
+            print(#file)
+            print(#line)
+            print(#function)
+            print(error.localizedDescription)
+        }
+        
+        return ret
+    }
+    
+    // ユーザ情報を保存する
+    func updateUser(_ newMdl:UserModel) -> Void{
+        do {
+            let realm = try Realm(configuration:RealmManager.config)
+            
+            try! realm.write {
+                realm.add(newMdl, update:true)
+            }
+        } catch {
+            print("ERROR at")
+            print(#file)
+            print(#line)
+            print(#function)
+            print(error.localizedDescription)
+        }
+    }
+    
+    func insertUpdateUser(userId:String, userType:String, name:String, hira:String, tel:String, email:String,  clinicName:String, clinicAddress:String, rooms:[String], requestDoctorId:String, entryDate:Date, status:Int, deleteDate:Date?) {
+        
+        do {
+            let realm = try Realm(configuration:RealmManager.config)
+            let userModel = UserModel()
+            userModel.userId = userId
+            userModel.userType = userType
+            userModel.name = name
+            userModel.hira = hira
+            userModel.tel = tel
+            userModel.email = email
+            userModel.clinicName = clinicName
+            userModel.clinicAddress = clinicAddress
+            userModel.topImgUpdate = Date()
+            userModel.iconImgUpdate = Date()
+            userModel.entryDate = entryDate
+            userModel.status = status
+            userModel.requestDoctorId = requestDoctorId
+            userModel.deleteDate = deleteDate
+            
+            for room in rooms {
+                userModel.chatRooms.append(room)
+            }
+            
+            try! realm.write {
+                realm.add(userModel, update:true)
+            }
+        } catch {
+            print("ERROR at")
+            print(#file)
+            print(#line)
+            print(#function)
+            print(error.localizedDescription)
+        }
+    }
+    
+    func insertUserTemp(_ userId:String) {
+        do {
+            let realm = try Realm(configuration:RealmManager.config)
+            let userModel = UserModel()
+            userModel.userId = userId
+            
+            try! realm.write {
+                realm.add(userModel)
+            }
+        } catch {
+            print("ERROR at")
+            print(#file)
+            print(#line)
+            print(#function)
+            print(error.localizedDescription)
+        }
     }
     
     func deleteUserModel(_ userId:String) {
@@ -130,6 +225,84 @@ class RealmManager {
         }
         
         return ret
+    }
+    
+    func insertChatRoom(roomId:String, userId:String) -> Void {
+        do {
+            let realm = try Realm(configuration:RealmManager.config)
+            let chatRoomModel = ChatRoomModel()
+            chatRoomModel.roomId = roomId
+            let user = getUserModelByUserId(userId: userId)
+            chatRoomModel.otherUser = user
+            
+            try! realm.write {
+                realm.add(chatRoomModel, update:true)
+            }
+        } catch {
+            print("ERROR at")
+            print(#file)
+            print(#line)
+            print(#function)
+            print(error.localizedDescription)
+        }
+    }
+    
+    func insertUpdateChatRoom(roomId:String, userId:String) -> ChatRoomModel {
+        var mdl = getChatRoomModelByRoomId(roomId: roomId)
+        do {
+            let realm = try Realm(configuration:RealmManager.config)
+            // 無かったら新規作成
+            if mdl == nil {
+                mdl = ChatRoomModel()
+                mdl!.roomId = roomId
+            }
+            
+            try! realm.write {
+                realm.add(mdl!, update:true)
+                let user = getUserModelByUserId(userId: userId)
+                mdl!.otherUser = user
+            }
+        } catch {
+            print("ERROR at")
+            print(#file)
+            print(#line)
+            print(#function)
+            print(error.localizedDescription)
+        }
+        
+        return mdl!
+    }
+    
+    // ユーザ情報を保存する
+    func insertUpdateChatRoom(_ newMdl:ChatRoomModel) -> Void{
+        do {
+            let realm = try Realm(configuration:RealmManager.config)
+            let oldMdl = getChatRoomModelByRoomId(roomId: newMdl.roomId)!
+            try! realm.write {
+                if oldMdl.otherUser == nil {
+                    oldMdl.otherUser = newMdl.otherUser
+                }
+                oldMdl.lastDate = newMdl.lastDate
+                for msg in newMdl.messages {
+                    var flag = false
+                    for msgold in oldMdl.messages {
+                        if msg.messageId == msgold.messageId {
+                            flag = true
+                        }
+                    }
+                    if flag {
+                        continue
+                    }
+                    oldMdl.messages.append(msg)
+                }
+            }
+        } catch {
+            print("ERROR at")
+            print(#file)
+            print(#line)
+            print(#function)
+            print(error.localizedDescription)
+        }
     }
     
     func getMessagesAllNoRead() -> [MessageModel] {
@@ -227,11 +400,11 @@ class RealmManager {
         let chatRoomModel = getChatRoomModelByRoomId(roomId: roomId)
         let messageModel = MessageModel()
         messageModel.messageId = msgId
-        messageModel.contents = msg[Constant.dbMessageContents] as! String
-        messageModel.entryDate = DateUtils.dateFromString( msg[Constant.dbMessageEntryDate] as! String)
-        messageModel.messageType = msg[Constant.dbMessageMsgType] as! String
-        messageModel.senderId = msg[Constant.dbMessageSenderUid] as! String
-        if msg[Constant.dbMessageRead] != nil {
+        messageModel.contents = msg[ChatDataManager.dbMessageContents] as! String
+        messageModel.entryDate = DateUtils.dateFromString( msg[ChatDataManager.dbMessageEntryDate] as! String)
+        messageModel.messageType = msg[ChatDataManager.dbMessageMsgType] as! String
+        messageModel.senderId = msg[ChatDataManager.dbMessageSenderUid] as! String
+        if msg[ChatDataManager.dbMessageRead] != nil {
             messageModel.read = true
         } else {
             messageModel.read = false
@@ -253,6 +426,29 @@ class RealmManager {
             print(error.localizedDescription)
         }
         return messageModel
+    }
+    // メッセージを保存する
+    func insertMessage(msgId:String, messageType:String, contents:String, senderId:String, entryDate:Date, read:Bool){
+        let messageModel = MessageModel()
+        messageModel.messageId = msgId
+        messageModel.messageType = messageType
+        messageModel.contents = contents
+        messageModel.senderId = senderId
+        messageModel.entryDate = entryDate
+        messageModel.read = read
+        
+        do {
+            let realm = try Realm(configuration:RealmManager.config)
+            try! realm.write {
+                realm.add(messageModel,update: true)
+            }
+        } catch {
+            print("ERROR at")
+            print(#file)
+            print(#line)
+            print(#function)
+            print(error.localizedDescription)
+        }
     }
     
     func insertUpdateMessage(_ mdl:MessageModel) {
@@ -325,7 +521,6 @@ class RealmManager {
     
     func isExistMessage(msgId: String) -> Bool {
         
-        
         do {
             let realm = try Realm(configuration:RealmManager.config)
             let ret = realm.objects(MessageModel.self).filter("messageId == '" + msgId + "'")
@@ -342,148 +537,8 @@ class RealmManager {
         return false
     }
     
-    // ユーザ情報を保存する
-    func updateUser(roomId:String, name:String, iconImgPathWeb:String, iconImgUpdate:Date) -> Void{
-        let chatRoomModel = getChatRoomModelByRoomId(roomId: roomId)
-        
-        do {
-            let realm = try Realm(configuration:RealmManager.config)
-            try! realm.write {
-                chatRoomModel?.otherUser?.name = name
-                chatRoomModel?.otherUser?.iconImgUpdate = iconImgUpdate
-            }
-        } catch {
-            print("ERROR at")
-            print(#file)
-            print(#line)
-            print(#function)
-            print(error.localizedDescription)
-        }
-    }
-    
-    // ユーザ情報を保存する
-    func updateUser(userId:String, status:Int) -> Void{
-        let user = getUserModelByUserId(userId: userId)
-        
-        do {
-            let realm = try Realm(configuration:RealmManager.config)
-            try! realm.write {
-                user?.status = status
-            }
-        } catch {
-            print("ERROR at")
-            print(#file)
-            print(#line)
-            print(#function)
-            print(error.localizedDescription)
-        }
-    }
-    
-    
-    func insertUpdateUser(userId:String, userType:String, name:String, tel:String, email:String,  clinicName:String, clinicAddress:String, rooms:[String], requestDoctorId:String, entryDate:Date, status:Int) {
-        do {
-            let realm = try Realm(configuration:RealmManager.config)
-            let userModel = UserModel()
-            userModel.userId = userId
-            userModel.userType = userType
-            userModel.name = name
-            userModel.tel = tel
-            userModel.email = email
-            userModel.clinicName = clinicName
-            userModel.clinicAddress = clinicAddress
-            userModel.topImgUpdate = Date()
-            userModel.iconImgUpdate = Date()
-            userModel.entryDate = entryDate
-            userModel.status = status
-            
-            for room in rooms {
-                userModel.chatRooms.append(room)
-            }
-            
-            try! realm.write {
-                realm.add(userModel, update:true)
-            }
-        } catch {
-            print("ERROR at")
-            print(#file)
-            print(#line)
-            print(#function)
-            print(error.localizedDescription)
-        }
-    }
-    func updateUser(userId:String, name:String, tel:String, clinicName:String, clinicAddress:String, iconImgUpdate:Date, topImgUpdate:Date) {
-        do {
-            let realm = try Realm(configuration:RealmManager.config)
-            let userMdl = getUserModelByUserId(userId: userId)!
-            
-            try! realm.write {
-                userMdl.name = name
-                userMdl.tel = tel
-                userMdl.clinicName = clinicName
-                userMdl.clinicAddress = clinicAddress
-                userMdl.iconImgUpdate = iconImgUpdate
-                if userMdl.userType == Constant.userTypeDoctor {
-                    userMdl.topImgUpdate = topImgUpdate
-                }
-            }
-        } catch {
-            print("ERROR at")
-            print(#file)
-            print(#line)
-            print(#function)
-            print(error.localizedDescription)
-        }
-    }
-    
-    func insertChatRoom(roomId:String, userId:String) -> Void {
-        do {
-            let realm = try Realm(configuration:RealmManager.config)
-            let chatRoomModel = ChatRoomModel()
-            chatRoomModel.roomId = roomId
-            let user = getUserModelByUserId(userId: userId)
-            chatRoomModel.otherUser = user
-            
-            try! realm.write {
-                realm.add(chatRoomModel, update:true)
-            }
-        } catch {
-            print("ERROR at")
-            print(#file)
-            print(#line)
-            print(#function)
-            print(error.localizedDescription)
-        }
-    }
-    
-    func insertUpdateChatRoom(roomId:String, userId:String) -> ChatRoomModel {
-        var mdl = getChatRoomModelByRoomId(roomId: roomId)
-        do {
-            let realm = try Realm(configuration:RealmManager.config)
-            // 無かったら新規作成
-            if mdl == nil {
-                mdl = ChatRoomModel()
-                mdl!.roomId = roomId
-            }
-            
-            try! realm.write {
-                realm.add(mdl!, update:true)
-                let user = getUserModelByUserId(userId: userId)
-                mdl!.otherUser = user
-            }
-        } catch {
-            print("ERROR at")
-            print(#file)
-            print(#line)
-            print(#function)
-            print(error.localizedDescription)
-        }
-        
-        return mdl!
-    }
-    
     // 0:insert, 1:update
     func insertUpdateRequest(_ requestMdl:RequestModel) -> Int{
-        print(#function)
         var ret = -1
         
         // 既存データがあればアップデート

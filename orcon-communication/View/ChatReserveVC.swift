@@ -82,17 +82,25 @@ class ChatReserveVC: UIViewController {
     // 保存ボタン
     @IBAction func save(_ sender: Any) {
         var message = ""
+        if CommonUtils.isUserTypeUser() {
+            message += "予約希望日\n"
+        }
+        else if CommonUtils.isUserTypeDoctor() {
+            message += "予約おすすめ\n"
+        }
+        
         for (indx,_) in selectedDates.enumerated() {
-            let indexPath = IndexPath(row: indx, section: 0)
-            let cell = table.cellForRow(at: indexPath) as! ChatReserveCell
-            var text = cell.title!.text! + ":" + cell.subTitle!.text! + " "
-            if cell.amBtn.isSelected && cell.pmBtn.isSelected{
+            var text = "第" + (indx + 1).description + "希望" + ":"
+            text += DateUtils.stringMMddFromDate(selectedDates[indx]) + "（" + formatter.weekdaySymbols[getWeekIdx(selectedDates[indx]) - 1].prefix(1) + "） "
+            
+            if selectedAm[indx] && selectedPm[indx]{
                 text += "終日"
-            } else if cell.amBtn.isSelected {
+            } else if selectedAm[indx] {
                 text += "午前中"
-            } else if cell.pmBtn.isSelected {
+            } else if selectedPm[indx] {
                 text += "午後"
             }
+            
             message += text + "\n"
         }
         
@@ -105,6 +113,16 @@ class ChatReserveVC: UIViewController {
         
     }
     
+    @IBAction func left(_ sender: Any) {
+        let date = Calendar.current.date(byAdding: .month, value: -1, to: calendar.currentPage)
+        calendar.setCurrentPage(date! , animated: true)
+
+    }
+    
+    @IBAction func right(_ sender: Any) {
+        let date = Calendar.current.date(byAdding: .month, value: +1, to: calendar.currentPage)
+        calendar.setCurrentPage(date! , animated: true)
+    }
     // MARK: - Navigation
 
 }
@@ -154,6 +172,21 @@ extension ChatReserveVC:FSCalendarDelegate ,FSCalendarDataSource,FSCalendarDeleg
     
     // カレンダーがタップされた時の処理
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
+        
+        // 画面上に保持している全スケジュールからタップしようとしているスケジュールがあるか調べる
+        let dayYYYYMMdd = DateUtils.stringYYYYMMddFromDate(date)
+        if let mdl = schedules.filter({scheMdl -> Bool in
+            return scheMdl.id_yyyymmdd == dayYYYYMMdd
+            
+        }).first {
+            // 見つかれば何もしない
+            if mdl.kind != nil {
+                if mdl.kind!.allCloseFlg {
+                    return
+                }
+            }
+        }
+        
         // 候補日に追加する
         selectedDates.append(date)
         selectedAm.append(true)
@@ -200,6 +233,20 @@ extension ChatReserveVC:FSCalendarDelegate ,FSCalendarDataSource,FSCalendarDeleg
     
     // 土日の色を変える
     func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, titleDefaultColorFor date: Date) -> UIColor?{
+        
+        // 画面上に保持している全スケジュールから表示しようとしているスケジュールがあるか調べる
+        let dayYYYYMMdd = DateUtils.stringYYYYMMddFromDate(date)
+        if let mdl = schedules.filter({scheMdl -> Bool in
+            return scheMdl.id_yyyymmdd == dayYYYYMMdd
+            
+        }).first {
+            // 見つかれば色を返す
+            if mdl.kind != nil {
+                return UIColor.white
+            }
+        }
+        
+        
         if self.judgeHoliday(date){
             return UIColor.red
         }

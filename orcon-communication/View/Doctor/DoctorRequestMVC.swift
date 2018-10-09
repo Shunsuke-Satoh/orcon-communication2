@@ -26,6 +26,7 @@ class DoctorRequestMVC: UIViewController,UITableViewDataSource, UITableViewDeleg
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationItem.title = "患者さん管理"
         
         // データロード
         dataLoad()
@@ -33,9 +34,10 @@ class DoctorRequestMVC: UIViewController,UITableViewDataSource, UITableViewDeleg
         // 背景画像のために透過
         table.backgroundColor = UIColor(red:1,green:1,blue:1,alpha:0.5)
         
-        // オブザーバをセットしていなければセット
-        ChatDataManager.getInstance().delegateReq = self
-        ChatDataManager.getInstance().setRequestObserver()
+        // デリゲート
+        FBRequestManager.getInstance().delegate = self
+        FBUserManager.getInstance().delegateImg = self
+        FBUserManager.getInstance().delegate = self
         
         // Do any additional setup after loading the view.
     }
@@ -124,28 +126,28 @@ class DoctorRequestMVC: UIViewController,UITableViewDataSource, UITableViewDeleg
                 if keyWord == "" {
                     return true
                 }
-                return user.name.contains(keyWord)
+                return user.name.contains(keyWord) || user.hira.contains(keyWord)
             })
         case 1:
             searchResults = customers.filter({user -> Bool in
                 if keyWord == "" {
                     return user.status == Constant.statusRequest
                 }
-                return user.name.contains(keyWord) && user.status == Constant.statusRequest
+                return (user.name.contains(keyWord)  || user.hira.contains(keyWord)) && user.status == Constant.statusRequest
             })
         case 2:
             searchResults = customers.filter({user -> Bool in
                 if keyWord == "" {
                     return user.status == Constant.statusTreat
                 }
-                return user.name.contains(keyWord) && user.status == Constant.statusTreat
+                return (user.name.contains(keyWord)  || user.hira.contains(keyWord)) && user.status == Constant.statusTreat
             })
         case 3:
             searchResults = customers.filter({user -> Bool in
                 if keyWord == "" {
                     return user.status == Constant.statusComp
                 }
-                return user.name.contains(keyWord) && user.status == Constant.statusComp
+                return (user.name.contains(keyWord) || user.hira.contains(keyWord)) && user.status == Constant.statusComp
             })
         default:
             break
@@ -154,7 +156,7 @@ class DoctorRequestMVC: UIViewController,UITableViewDataSource, UITableViewDeleg
     }
 }
 
-extension DoctorRequestMVC: RequestDelegate {
+extension DoctorRequestMVC: FBRequestManagerDelegate {
     func requestUpdated(reqModel:RequestModel){
         dataLoad()
     }
@@ -164,4 +166,20 @@ extension DoctorRequestMVC: RequestDelegate {
     func requestDeleted(doctorId:String, customerId:String){
         dataLoad()
     }
+}
+
+
+extension DoctorRequestMVC: FBUserManagerImageDelegate, FBUserManagerDelegate {
+    func compTopImg(userId: String) {
+        dataLoad()
+    }
+    
+    func compIconImg(userId: String) {
+        dataLoad()
+    }
+    
+    func userUpdated(userModel: UserModel) {
+        dataLoad()
+    }
+    
 }

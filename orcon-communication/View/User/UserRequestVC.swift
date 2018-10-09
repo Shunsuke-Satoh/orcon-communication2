@@ -59,10 +59,10 @@ class UserRequestVC: UIViewController,UITableViewDataSource, UITableViewDelegate
         let waitViewRes = waitView.showWait("医院情報を取得中です", subTitle: "")
         
         //ロード
-        FBRealTimeDataBaseManager.getInstance().downloadAndSaveRealmDoctorInfo(callback: {(isSuccess, errorMsg) in
+        FBUserManager.getInstance().downloadAndSaveRealmDoctorInfo(callback: {(isSuccess, errorMsg) in
             
             waitViewRes.close()
-            //            waitView.dismiss(animated: false, completion: nil)
+            
             // ローディング成功 or ローディング失敗
             if isSuccess {
                 successView.showSuccess("医院情報の取得に成功しました", subTitle: "")
@@ -118,6 +118,13 @@ class UserRequestVC: UIViewController,UITableViewDataSource, UITableViewDelegate
         selectedUserId = ""
         tableView.reloadData()
     }
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+//        if searchBar.text! != "" {
+//            FBUserManager.getInstance().searchAndSaveRealmDoctorInfo(searchBar.text!, callback: {
+//                self.load()
+//            })
+//        }
+    }
     /*
     // MARK: - Navigation
 
@@ -130,21 +137,40 @@ class UserRequestVC: UIViewController,UITableViewDataSource, UITableViewDelegate
     // リクエスト
     @IBAction func request(_ sender: UIButton) {
         // サーバアップロード
-       let fbRTDM = FBRealTimeDataBaseManager.getInstance()
-        fbRTDM.uploadRequestFromCustomerToDoctor(doctorId: selectedUserId)
+        FBRequestManager.getInstance().uploadRequestFromCustomerToDoctor(doctorId: selectedUserId)
         // Realm保存
         let realmDM = RealmManager.getInstance()
         realmDM.insertRequest(customerId: userDM.getOwnUserId(), doctorId: selectedUserId, requestDate: Date(), isConfirm: false, confirmDate: nil)
 
         // push通知
-        let topicName = CommonUtils.getReqTopicName(doctorId: selectedUserId, customerId: userDM.getOwnUserId())
+        let topicName = CommonUtils.getReqDoctorTopicName(doctorId: selectedUserId)
         let userMdl = realmDM.getUserModelByUserId(userId: userDM.getOwnUserId())!
         CommonUtils.postDataMessage(topicName: topicName, title: userMdl.name + "さんからリクエストが届きました", body: "", callback: {(_) in})
         
         // push受け取りのためトピック参加
-        CommonUtils.signInTockenToRequest()
+        CommonUtils.getInstance().signInTockenToRequest(false)
+        // リスナー登録
+        FBRequestManager.getInstance().setRequestObserver(doctorId: selectedUserId, customerId: userDM.getOwnUserId())
+        // 関係無いドクター情報を消去
+        let doctors = realmDM.getDoctors()
+        for doc in doctors {
+            if doc.userId != selectedUserId {
+                FBUserManager.getInstance().removeObserver(doc.userId)
+                realmDM.deleteUserModel(doc.userId)
+            }
+        }
         
         // 画面遷移
         performSegue(withIdentifier: "toUserMainSegue", sender: nil)
+    }
+}
+
+extension UserRequestVC: FBUserManagerImageDelegate {
+    func compTopImg(userId: String) {
+        
+    }
+    
+    func compIconImg(userId: String) {
+        
     }
 }

@@ -32,6 +32,7 @@ class MainVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationController?.title = "メイン"
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -59,17 +60,15 @@ class MainVC: UIViewController {
             if let roomId = sender as? String {
                 let vc: ChatViewController = (segue.destination as? ChatViewController)!
                 vc.roomId = roomId
-                
-                // チャット画面ではデフォルトのナビゲーションバー
-                navigationController?.isNavigationBarHidden  = false
             }
         }
     }
     
     func dataReload() {
-        ChatDataManager.getInstance().delegateMsg = self
-        ChatDataManager.getInstance().delegateReq = self
-        ChatDataManager.getInstance().setRequestObserver()
+        ChatDataManager.getInstance().delegate = self
+        FBRequestManager.getInstance().delegate = self
+        FBUserManager.getInstance().delegate = self
+        FBUserManager.getInstance().delegateImg = self
         
         let ownId = userDM.getOwnUserId()
         requestLbl.isHidden = true
@@ -82,6 +81,9 @@ class MainVC: UIViewController {
             
             clinicIconImg.image = userDM.loadImageForOwnIcon()
             clinicTopImg.image = userDM.loadImageForOwnTop()
+            
+            // リクエストのリスナー登録
+            FBRequestManager.getInstance().setRequestObserver(doctorId: ownId, customerId: "")
             
         }
             // カスタマーの場合
@@ -100,6 +102,9 @@ class MainVC: UIViewController {
                     requestLbl.isHidden = false // ラベルの表示
                     
                     chatBtn.isHidden = true
+                } else {
+                    // リクエストのリスナー登録
+                    FBRequestManager.getInstance().setRequestObserver(doctorId: requestModel.doctorId, customerId: requestModel.customerId)
                 }
                 
                 calendarBtn.isHidden = true
@@ -111,8 +116,6 @@ class MainVC: UIViewController {
         midokuUpdate()
         // リクエスト承認の更新
         requestUpdate()
-        
-        navigationController?.isNavigationBarHidden = true
     }
     
     func midokuUpdate(){
@@ -147,7 +150,7 @@ class MainVC: UIViewController {
     
 }
 
-extension MainVC: MessageLoadDelegate {
+extension MainVC: MessageDelegate {
     func messageUpdated(msgModel: MessageModel) {
         midokuUpdate()
     }
@@ -156,13 +159,14 @@ extension MainVC: MessageLoadDelegate {
     }
 }
 
-extension MainVC: RequestDelegate{
+extension MainVC: FBRequestManagerDelegate{
     func requestUpdated(reqModel:RequestModel){
         if CommonUtils.isUserTypeDoctor(){
             requestUpdate()
         } else if CommonUtils.isUserTypeUser() {
             dataReload()
-            ChatDataManager.getInstance().getDataFromDB()
+            // チャットルームのデータロード
+            ChatDataManager.getInstance().getDataFromDB(callback: {(_) in})
         }
     }
     func requestInserted(reqModel:RequestModel){
@@ -180,4 +184,19 @@ extension MainVC: RequestDelegate{
     func showPopUpAndSegue() {
         
     }
+}
+
+extension MainVC: FBUserManagerImageDelegate, FBUserManagerDelegate {
+    func compTopImg(userId: String) {
+        dataReload()
+    }
+    
+    func compIconImg(userId: String) {
+        dataReload()
+    }
+    
+    func userUpdated(userModel: UserModel) {
+        dataReload()
+    }
+    
 }

@@ -11,9 +11,6 @@ import UIKit
 class MainNVC: UINavigationController {
     
     override func unwind(for unwindSegue: UIStoryboardSegue, towards subsequentVC: UIViewController) {
-        print(#function)
-        
-        print("YEARR")
     }
     
 }

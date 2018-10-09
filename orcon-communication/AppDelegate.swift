@@ -10,6 +10,7 @@ import UIKit
 import CoreData
 import Firebase
 import UserNotifications
+import SwiftyStoreKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, MessagingDelegate {
@@ -34,20 +35,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         // リモートプッシュの設定
         application.registerForRemoteNotifications()
         
+        // see notes below for the meaning of Atomic / Non-Atomic
+//        SwiftyStoreKit.completeTransactions(atomically: true) { purchases in
+//            for purchase in purchases {
+//                switch purchase.transaction.transactionState {
+//                case .purchased, .restored:
+//                    if purchase.needsFinishTransaction {
+//                        // Deliver content from server, then:
+//                        SwiftyStoreKit.finishTransaction(purchase.transaction)
+//                    }
+//                // Unlock content
+//                case .failed, .purchasing, .deferred:
+//                    break // do nothing
+//                }
+//            }
+//        }
+        
+        
+        
+        
+        
         let userDM = UserDefaultManager()
         
         // ユーザ登録以降の起動であればチャットデータを取得してメイン画面へ
         if userDM.getOwnUserId() != "" {
-            
-            // スケジュールオブザーバー
-            
-            let fbM = FBRealTimeDataBaseManager.getInstance()
-            fbM.setScheduleObserver()
-            fbM.setKindObserver()
-            fbM.setKindDetailObserver()
-            
-            let chatDM = ChatDataManager.getInstance()
-            chatDM.getDataFromDB()
+            ChatDataManager.getInstance().getDataFromDB(callback: {(errorMsg) in
+                // スケジュールオブザーバー
+                let fbM = FBRealTimeDataBaseManager.getInstance()
+                fbM.setScheduleObserver()
+                fbM.setKindObserver()
+                fbM.setKindDetailObserver()
+            })
             
             self.window = UIWindow(frame: UIScreen.main.bounds)
             let storyboard = UIStoryboard(name: "Main", bundle:nil)
@@ -162,12 +180,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     
     // トークン取得時
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String) {
+        print("getToken")
         // トークンをUserDefaultに保存
         let userDM = UserDefaultManager()
         userDM.setOwnToken(token: fcmToken)
         // トピックにトークンを登録
-        CommonUtils.signInTockenToChat()
-        CommonUtils.signInTockenToRequest()
+        CommonUtils.getInstance().signInTockenToChat(true)
+        CommonUtils.getInstance().signInTockenToRequest(true)
     }
     
     

@@ -7,13 +7,12 @@
 //
 
 import UIKit
+import SCLAlertView
 
 class DoctorCalendarSetViewController: UIViewController,UIPopoverPresentationControllerDelegate {
 
     @IBOutlet weak var table: UITableView!
-    @IBOutlet weak var addBtn: UIBarButtonItem!
     @IBOutlet weak var navBar: UINavigationBar!
-    @IBOutlet weak var yasumiView: UIView!
     
     var kindModelDisp:[CalKindModel] = []
     var isAdd = false
@@ -22,7 +21,7 @@ class DoctorCalendarSetViewController: UIViewController,UIPopoverPresentationCon
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        navigationItem.title = "診療日種別の選択"
         
         dataLoad()
         // Do any additional setup after loading the view.
@@ -32,41 +31,58 @@ class DoctorCalendarSetViewController: UIViewController,UIPopoverPresentationCon
         kindModelDisp = RealmManager.getInstance().getKindModelsOrderByKindNum()
         table.reloadData()
     }
-    @IBAction func add(_ sender: UIBarButtonItem) {
-        isAdd = true
-        selectedRow = kindModelDisp.count + 1
-        // ポップアップさせる
-        performSegue(withIdentifier: "DoctorCalendarKindPop", sender: nil)
-    }
+    
+    // 追加用スクリプト
+//    @IBAction func add(_ sender: UIBarButtonItem) {
+//        if kindModelDisp.count < 4 {
+//            isAdd = true
+//            selectedRow = kindModelDisp.count + 1
+//            // ポップアップさせる
+//            performSegue(withIdentifier: "DoctorCalendarKindPop", sender: nil)
+//        }
+//        else {
+//            // 追加させない
+//            // ポップアップを準備
+//            let appearance = SCLAlertView.SCLAppearance(
+//                showCloseButton:false
+//            )
+//
+//            let confV = SCLAlertView(appearance: appearance)
+//            confV.addButton("了解"){
+//                confV.dismiss(animated: true, completion: {})
+//            }
+//            confV.showWarning("警告", subTitle: "種別は４種類までです。")
+//        }
+//    }
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "DoctorCalendarKindPop" {
             
-            let popVC = segue.destination as! DoctorCalendarKindPopVC
-            popVC.popoverPresentationController?.delegate = self
+            let popVC = segue.destination as! DoctorCalendarKindVC
+//            popVC.popoverPresentationController?.delegate = self
             
             // 画面サイズ
-            popVC.preferredContentSize = CGSize(width:self.view.frame.width * 0.95, height:300)
+//            popVC.preferredContentSize = CGSize(width:self.view.frame.width * 0.95, height:300)
             
             // 表示位置
-            if isAdd {
-                popVC.popoverPresentationController?.sourceView = navBar
-            
-                popVC.popoverPresentationController?.sourceRect = navBar.bounds
-            } else {
-                popVC.popoverPresentationController?.sourceView = selectedCell
-                
-                popVC.popoverPresentationController?.sourceRect = selectedCell!.bounds
-                popVC.calKindMdl = kindModelDisp[selectedRow]
-            }
+//            if isAdd {
+//                popVC.popoverPresentationController?.sourceView = navBar
+//
+//                popVC.popoverPresentationController?.sourceRect = navBar.bounds
+//            } else {
+//                popVC.popoverPresentationController?.sourceView = selectedCell
+//
+//                popVC.popoverPresentationController?.sourceRect = selectedCell!.bounds
+//            }
+            popVC.calKindMdl = kindModelDisp[selectedRow]
             
             popVC.delegate = self
             popVC.isAdd = isAdd
             popVC.row = selectedRow
         }
     }
-    func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
-        return .none
-    }
+//    func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
+//        return .none
+//    }
     /*
     // MARK: - Navigation
 
@@ -105,38 +121,27 @@ extension DoctorCalendarSetViewController: UITableViewDataSource, UITableViewDel
         
         // 休診日の場合はほとんど表示しない
         if kindMdl.allCloseFlg {
-            cell.uketukeStartRoll.isHidden = true
-            cell.uketukeEndRoll.isHidden = true
-            cell.yasumiView.isHidden = true
+            cell.openLbl.isHidden = true
+            cell.closeLbl.isHidden = true
             cell.yasumiUmuLbl.isHidden = true
             
             return cell
         }
         
         // 営業開始時間
-        let yyyy_mm_dd_ = DateUtils.stringFromDate(Date()).prefix(11)
-        
-        cell.uketukeStartRoll.isHidden = false
-        cell.uketukeEndRoll.isHidden = false
-        
-        cell.uketukeStartRoll.date = DateUtils.dateFromString(yyyy_mm_dd_ + kindMdl.open[0].StartHHmm + ":00")
-        cell.uketukeEndRoll.date = DateUtils.dateFromString(yyyy_mm_dd_ + kindMdl.open[0].EndHHmm + ":00")
+        cell.openLbl.isHidden = false
+        cell.openLbl.text = kindMdl.open[0].StartHHmm + " 〜 " + kindMdl.open[0].EndHHmm
         
         // 休診時間
-        cell.yasumiView.isHidden = true
+        cell.closeLbl.isHidden = true
         cell.yasumiUmuLbl.isHidden = false
         
         if kindMdl.closeFlg {
-            cell.yasumiStartRoll.date = DateUtils.dateFromString(yyyy_mm_dd_ + kindMdl.close[0].StartHHmm + ":00")
-            cell.yasumiEndRoll.date = DateUtils.dateFromString(yyyy_mm_dd_ + kindMdl.close[0].EndHHmm + ":00")
-            cell.yasumiView.isHidden = false
+            cell.closeLbl.text = kindMdl.close[0].StartHHmm + " 〜 " + kindMdl.close[0].EndHHmm
+            
+            cell.closeLbl.isHidden = false
             cell.yasumiUmuLbl.isHidden = true
         }
-        
-        cell.uketukeStartRoll.isEnabled = false
-        cell.uketukeEndRoll.isEnabled = false
-        cell.yasumiStartRoll.isEnabled = false
-        cell.yasumiEndRoll.isEnabled = false
         
         return cell
     }

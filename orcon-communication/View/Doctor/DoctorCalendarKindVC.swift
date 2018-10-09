@@ -10,7 +10,7 @@ import UIKit
 import MKColorPicker
 import SCLAlertView
 
-class DoctorCalendarKindPopVC: UIViewController {
+class DoctorCalendarKindVC: UIViewController {
     var delegate:DoctorCalKindPopDelegate?
     
     var colorPicker:ColorPickerViewController!
@@ -23,8 +23,8 @@ class DoctorCalendarKindPopVC: UIViewController {
     @IBOutlet weak var closeStart: UIDatePicker!
     @IBOutlet weak var closeEnd: UIDatePicker!
     @IBOutlet weak var closeView: UIView!
-    @IBOutlet weak var allCloseBtn: UIButton!
-    @IBOutlet weak var deleteBtn: UIButton!
+//    @IBOutlet weak var allCloseBtn: UIButton!
+//    @IBOutlet weak var deleteBtn: UIButton!
     
     var calKindMdl:CalKindModel!
     var isAdd = true
@@ -33,6 +33,7 @@ class DoctorCalendarKindPopVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationItem.title = "診療日種別の設定"
         
         // カラーピッカーの初期化
         colorPicker = ColorPickerViewController()
@@ -45,10 +46,10 @@ class DoctorCalendarKindPopVC: UIViewController {
             calKindMdl = CalKindModel()
             calKindMdl.kindNum = row
             // 追加時の削除は無効化
-            deleteBtn.isHidden = true
+//            deleteBtn.isHidden = true
         } else {
             // 追加時のみ休診日の設定を許す
-            allCloseBtn.isHidden = true
+//            allCloseBtn.isHidden = true
         }
         
         // タイトル
@@ -111,58 +112,58 @@ class DoctorCalendarKindPopVC: UIViewController {
     */
     
     // 休診日 追加時が保証されている
-    @IBAction func tapAllClose(_ sender: UIButton) {
-        var forInsertMdl:CalKindModel!
-        forInsertMdl = calKindMdl
-        
-        // キー情報の生成
-        forInsertMdl.doctorId = UserDefaultManager().getOwnUserId()
-        forInsertMdl.kindId = UUID().uuidString
-        forInsertMdl.kindNum = row
-        
-        // 休診日の設定
-        forInsertMdl.allCloseFlg = true
-        
-        // 色の設定
-        forInsertMdl.color_r = (colorImg.backgroundColor?.redValue)!
-        forInsertMdl.color_g = (colorImg.backgroundColor?.greenValue)!
-        forInsertMdl.color_b = (colorImg.backgroundColor?.blueValue)!
-        
-        // Realmに保存
-        RealmManager.getInstance().insertUpdateKind(forInsertMdl)
-        
-        delegate?.addAllClose(mdl: forInsertMdl)
-        
-        dismiss(animated: true, completion: {})
-    }
+//    @IBAction func tapAllClose(_ sender: UIButton) {
+//        var forInsertMdl:CalKindModel!
+//        forInsertMdl = calKindMdl
+//        
+//        // キー情報の生成
+//        forInsertMdl.doctorId = UserDefaultManager().getOwnUserId()
+//        forInsertMdl.kindId = UUID().uuidString
+//        forInsertMdl.kindNum = row
+//        
+//        // 休診日の設定
+//        forInsertMdl.allCloseFlg = true
+//        
+//        // 色の設定
+//        forInsertMdl.color_r = (colorImg.backgroundColor?.redValue)!
+//        forInsertMdl.color_g = (colorImg.backgroundColor?.greenValue)!
+//        forInsertMdl.color_b = (colorImg.backgroundColor?.blueValue)!
+//        
+//        // Realmに保存
+//        RealmManager.getInstance().insertUpdateKind(forInsertMdl)
+//        
+//        delegate?.addAllClose(mdl: forInsertMdl)
+//        
+//        dismiss(animated: true, completion: {})
+//    }
     // 削除
-    @IBAction func tapDelete(_ sender: Any) {
-        // ポップアップを準備
-        let appearance = SCLAlertView.SCLAppearance(
-            showCloseButton:false
-        )
-        
-        let confV = SCLAlertView(appearance: appearance)
-        
-        // 削除ボタン
-        confV.addButton("はい"){
-            // 削除処理へ
-            RealmManager.getInstance().deleteKind(kindId: self.calKindMdl.kindId)
-            self.delegate?.delete()
-            
-            confV.dismiss(animated: true, completion: {})
-            self.dismiss(animated: true, completion: {})
-        }
-        
-        // キャンセルボタン
-        confV.addButton("いいえ"){
-            confV.dismiss(animated: true, completion: {})
-        }
-        
-        // ダイアログ表示
-        confV.showNotice("確認", subTitle: "削除しますか？")
-        
-    }
+//    @IBAction func tapDelete(_ sender: Any) {
+//        // ポップアップを準備
+//        let appearance = SCLAlertView.SCLAppearance(
+//            showCloseButton:false
+//        )
+//
+//        let confV = SCLAlertView(appearance: appearance)
+//
+//        // 削除ボタン
+//        confV.addButton("はい"){
+//            // 削除処理へ
+//            RealmManager.getInstance().deleteKind(kindId: self.calKindMdl.kindId)
+//            self.delegate?.delete()
+//
+//            confV.dismiss(animated: true, completion: {})
+//            self.dismiss(animated: true, completion: {})
+//        }
+//
+//        // キャンセルボタン
+//        confV.addButton("いいえ"){
+//            confV.dismiss(animated: true, completion: {})
+//        }
+//
+//        // ダイアログ表示
+//        confV.showNotice("確認", subTitle: "削除しますか？")
+//
+//    }
     
     @IBAction func tapSave(_ sender: UIButton) {
         var forInsertMdl:CalKindModel!
@@ -231,10 +232,11 @@ class DoctorCalendarKindPopVC: UIViewController {
             delegate?.save(mdl: forInsertMdl)
         }
         
-        dismiss(animated: true, completion: {})
+        self.navigationController?.popViewController(animated: true)
+//        dismiss(animated: true, completion: {})
     }
     @IBAction func tapCancel(_ sender: Any) {
-        dismiss(animated: true, completion:{})
+        self.navigationController?.popViewController(animated: true)
     }
     @IBAction func tapSW(_ sender: UISwitch) {
         showOrHidden()

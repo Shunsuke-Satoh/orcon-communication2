@@ -11,10 +11,7 @@ import UIKit
 class CalendarKindCell: UITableViewCell {
     @IBOutlet weak var titleLbl: UILabel!
     @IBOutlet weak var colorImg: UIImageView!
-    @IBOutlet weak var uketukeStartRoll: UIDatePicker!
-    @IBOutlet weak var uketukeEndRoll: UIDatePicker!
-    @IBOutlet weak var yasumiStartRoll: UIDatePicker!
-    @IBOutlet weak var yasumiEndRoll: UIDatePicker!
+    @IBOutlet weak var openLbl: UILabel!
     @IBOutlet weak var yasumiUmuLbl: UILabel!
-    @IBOutlet weak var yasumiView: UIView!
+    @IBOutlet weak var closeLbl: UILabel!
 }

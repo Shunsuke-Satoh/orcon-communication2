@@ -42,12 +42,12 @@ final class UserDefaultManager {
     }
     
     func setOwnToken(token:String) -> Void {
-        UserDefaults.standard.set(token, forKey: Constant.dbUserToken)
+        UserDefaults.standard.set(token, forKey: Constant.token)
     }
     
     func getOwnToken() -> String {
         var ret = ""
-        if let temp = UserDefaults.standard.string(forKey: Constant.dbUserToken) {
+        if let temp = UserDefaults.standard.string(forKey: Constant.token) {
             ret = temp
         }
         return ret

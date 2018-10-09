@@ -9,10 +9,11 @@
 import UIKit
 import Firebase
 import FirebaseAuth
-import FirebaseStorage
+import SCLAlertView
 
 class AcountEntryConfirmViewController: UIViewController {
     @IBOutlet weak var nameLbl: UILabel!
+    @IBOutlet weak var hiraLbl: UILabel!
     @IBOutlet weak var emailLbl: UILabel!
     @IBOutlet weak var passwordLbl: UILabel!
     @IBOutlet weak var clinicNameLbl: UILabel!
@@ -30,6 +31,7 @@ class AcountEntryConfirmViewController: UIViewController {
     @IBOutlet weak var clinicAddressStack: UIStackView!
     var userType = ""
     var name: String = ""
+    var hira: String = ""
     var email: String = ""
     var password: String = ""
     var clinicName: String = ""
@@ -57,6 +59,7 @@ class AcountEntryConfirmViewController: UIViewController {
         
         
         nameLbl.text = name
+        hiraLbl.text = hira
         telLbl.text = tel
         emailLbl.text = email
         passwordLbl.text = password
@@ -90,7 +93,6 @@ class AcountEntryConfirmViewController: UIViewController {
     }
     
     func upload() {
-        let fbRTDM = FBRealTimeDataBaseManager.getInstance()
         let imgM = FBStorageManager()
         let userDM = UserDefaultManager()
         let realmDM = RealmManager.getInstance()
@@ -104,7 +106,21 @@ class AcountEntryConfirmViewController: UIViewController {
         // ユーザ認証
         Auth.auth().createUser(withEmail: email, password: password){(authResult, error) in
             if let error = error {
-                print(error)
+                self.loadingIcon.stopAnimating()
+                // ポップアップを準備
+                let appearance = SCLAlertView.SCLAppearance(
+                    showCloseButton:false
+                )
+                
+                let confV = SCLAlertView(appearance: appearance)
+                
+                // 破棄ボタン
+                confV.addButton("はい"){
+                    confV.dismiss(animated: true, completion: {})
+                }
+                
+                // ダイアログ表示
+                confV.showNotice("通信不良または既に登録されているメールアドレスです", subTitle: "登録に心当たりがある場合は、トップ画面に戻り「データ引継ぎ」からデータ引継ぎを行なってください")
             } else{
                 // ユーザID
                 let uid = (authResult?.user.uid)!
@@ -115,7 +131,7 @@ class AcountEntryConfirmViewController: UIViewController {
                 userDM.setOwnUserType(userType: self.userType)
           
                 // ユーザ情報をアップロード
-                fbRTDM.uploadUserAndDoctor(userId: uid, userType: self.userType, name: self.name, tel: self.tel, email: self.email, password: self.password, clinicName: self.clinicName, clinicAddress: self.clinicAddress)
+                FBUserManager.getInstance().uploadUserAndDoctor(userId: uid, userType: self.userType, name: self.name, hira: self.hira, tel: self.tel, email: self.email, password: self.password, clinicName: self.clinicName, clinicAddress: self.clinicAddress)
            
                 
                 // 画像データをアップロード トップ、アイコン
@@ -140,7 +156,7 @@ class AcountEntryConfirmViewController: UIViewController {
                 }
                 
                 // Realmに保存
-                realmDM.insertUpdateUser(userId: uid, userType: self.userType, name: self.name, tel: self.tel, email: self.email, clinicName: self.clinicName, clinicAddress: self.clinicAddress, rooms:[],requestDoctorId: "",entryDate: Date(),status:0)
+                realmDM.insertUpdateUser(userId: uid, userType: self.userType, name: self.name, hira: self.hira, tel: self.tel, email: self.email, clinicName: self.clinicName, clinicAddress: self.clinicAddress, rooms:[],requestDoctorId: "",entryDate: Date(),status:0, deleteDate: nil)
                 
                 // UserDefaultに保存 トップ、アイコン
                 userDM.saveImageForOwnIcon(uiImage: self.iconImg)

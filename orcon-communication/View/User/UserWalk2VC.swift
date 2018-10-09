@@ -1,24 +1,19 @@
 //
-//  WelcomeViewController.swift
+//  UserWalk2VC.swift
 //  orcon-communication
 //
-//  Created by ONE NATION on 2018/09/12.
+//  Created by ONE NATION on 2018/10/06.
 //  Copyright © 2018年 ONE NATION. All rights reserved.
 //
 
 import UIKit
 
-class WelcomeViewController: UIViewController{
-    
-    
+class UserWalk2VC: UIViewController {
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        PurchaseManager.purchaseGetInfo()
-    }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        // Do any additional setup after loading the view.
     }
     
 
@@ -27,8 +22,9 @@ class WelcomeViewController: UIViewController{
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
+        // Get the new view controller using segue.destination.
         // Pass the selected object to the new view controller.
     }
     */
+
 }

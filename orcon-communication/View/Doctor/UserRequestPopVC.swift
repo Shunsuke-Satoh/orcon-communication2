@@ -70,7 +70,7 @@ class UserRequestPopVC: UIViewController {
         // 登録ボタン
         confV.addButton("はい"){
             // 登録処理へ
-            FBRealTimeDataBaseManager.getInstance().updateRequestFromDoctorToCustomer(customerId: self.user.userId)
+            FBRequestManager.getInstance().updateRequestFromDoctorToCustomer(customerId: self.user.userId)
             
             // push通知
             let topicName = CommonUtils.getReqTopicName(doctorId: UserDefaultManager().getOwnUserId(), customerId: self.user.userId)
@@ -111,7 +111,7 @@ class UserRequestPopVC: UIViewController {
         // 削除ボタン
         confV.addButton("はい"){
             // 削除処理へ
-            FBRealTimeDataBaseManager.getInstance().deleteRequestFromDoctor(customerId: self.user.userId)
+            FBRequestManager.getInstance().deleteRequestFromDoctor(customerId: self.user.userId)
             
             // push通知
             let topicName = CommonUtils.getReqTopicName(doctorId: UserDefaultManager().getOwnUserId(), customerId: self.user.userId)
@@ -151,7 +151,7 @@ class UserRequestPopVC: UIViewController {
         // 治療完了ボタン
         confV.addButton("はい"){
             // 更新処理へ
-            FBRealTimeDataBaseManager.getInstance().updateUserStatus(userId:self.user.userId,status:Constant.statusComp)
+            FBUserManager.getInstance().updateUserStatus(userId:self.user.userId,status:Constant.statusComp)
             
             confV.dismiss(animated: true, completion: {})
             

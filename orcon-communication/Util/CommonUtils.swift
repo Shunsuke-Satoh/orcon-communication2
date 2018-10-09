@@ -10,6 +10,21 @@ import UIKit
 import Firebase
 
 class CommonUtils {
+    private static var own: CommonUtils?
+    
+    private var topics:[String] = [] // トピックパス
+    
+    private init() {
+    }
+    
+    static func getInstance() -> CommonUtils{
+        if own == nil {
+            own = CommonUtils.init()
+        }
+        return own!
+    }
+    
+    
     static func isUserTypeDoctor() -> Bool {
         var ret = false
         if UserDefaultManager().getOwnUserType() == Constant.userTypeDoctor {
@@ -49,7 +64,7 @@ class CommonUtils {
         return topicName
     }
     
-    static func signInTockenToChat() {
+    func signInTockenToChat(_ isNewToken:Bool) {
         if UserDefaultManager().getOwnToken() == "" {
             return
         }
@@ -57,7 +72,17 @@ class CommonUtils {
         if let rooms = RealmManager.getInstance().getChatRoomModels() {
             for room in rooms {
                 let topicName = CommonUtils.getChatTopicName(roomId: room.roomId)
-                Messaging.messaging().subscribe(toTopic: topicName)
+                if Messaging.messaging().fcmToken != nil {
+                    // 既にトピック参加していないか？
+                    if topics.contains(topicName) {
+                        if isNewToken {
+                            Messaging.messaging().subscribe(toTopic: topicName)
+                        }
+                    } else {
+                        Messaging.messaging().subscribe(toTopic: topicName)
+                        topics.append(topicName)
+                    }
+                }
             }
         }
     }
@@ -72,28 +97,52 @@ class CommonUtils {
         return "reqDoc_" + doctorId
     }
     
-    static func signInTockenToRequest() {
+    func signInTockenToRequest(_ isNewToken:Bool) {
         if UserDefaultManager().getOwnToken() == "" {
             return
         }
         
-        if isUserTypeUser() {
+        if CommonUtils.isUserTypeUser() {
             if let req = RealmManager.getInstance().getRequestByCustomerId(customerId: UserDefaultManager().getOwnUserId()) {
                 
                 let topicName = CommonUtils.getReqTopicName(doctorId: req.doctorId, customerId:req.customerId)
-                Messaging.messaging().subscribe(toTopic: topicName)
+                // 既にトピック参加していないか？
+                if topics.contains(topicName) {
+                    if isNewToken {
+                        Messaging.messaging().subscribe(toTopic: topicName)
+                    }
+                } else {
+                    Messaging.messaging().subscribe(toTopic: topicName)
+                    topics.append(topicName)
+                }
             }
-        } else if isUserTypeDoctor() {
+        } else if CommonUtils.isUserTypeDoctor() {
             let reqs = RealmManager.getInstance().getRequestsByDoctorId(doctorId: UserDefaultManager().getOwnUserId())
             
             for req in reqs {
                 let topicName = CommonUtils.getReqTopicName(doctorId: req.doctorId, customerId:req.customerId)
-                Messaging.messaging().subscribe(toTopic: topicName)
+                // 既にトピック参加していないか？
+                if topics.contains(topicName) {
+                    if isNewToken {
+                        Messaging.messaging().subscribe(toTopic: topicName)
+                    }
+                } else {
+                    Messaging.messaging().subscribe(toTopic: topicName)
+                    topics.append(topicName)
+                }
             }
             
             // 自分自身のトピックにも加入
             let topicName = CommonUtils.getReqDoctorTopicName(doctorId: UserDefaultManager().getOwnUserId())
-            Messaging.messaging().subscribe(toTopic: topicName)
+            // 既にトピック参加していないか？
+            if topics.contains(topicName) {
+                if isNewToken {
+                    Messaging.messaging().subscribe(toTopic: topicName)
+                }
+            } else {
+                Messaging.messaging().subscribe(toTopic: topicName)
+                topics.append(topicName)
+            }
         }
     }
     
@@ -159,7 +208,6 @@ class CommonUtils {
                         callback(false)
                         return
                     } else {
-                        print(data?.description)
                         callback(true)
                     }
                 } else {

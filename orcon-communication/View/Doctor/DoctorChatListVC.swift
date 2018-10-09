@@ -12,8 +12,8 @@ import RealmSwift
 
 class DoctorChatListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate,UISearchBarDelegate {
     
-    @IBOutlet weak var backButton: UIBarButtonItem!
-    @IBOutlet weak var navBar: UINavigationBar!
+//    @IBOutlet weak var backButton: UIBarButtonItem!
+//    @IBOutlet weak var navBar: UINavigationBar!
     @IBOutlet weak var table: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
     
@@ -23,7 +23,9 @@ class DoctorChatListViewController: UIViewController, UITableViewDataSource, UIT
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        ChatDataManager.getInstance().delegateMsg = self
+        ChatDataManager.getInstance().delegate = self
+        FBUserManager.getInstance().delegateImg = self
+        FBUserManager.getInstance().delegate = self
         
         // 背景画像のために透過
         table.backgroundColor = UIColor(red:1,green:1,blue:1,alpha:0.5)
@@ -34,12 +36,12 @@ class DoctorChatListViewController: UIViewController, UITableViewDataSource, UIT
             searchResults.append(mdl)
         }
         
+        navigationItem.title = "トーク"
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         table.reloadData()
-        navigationController?.isNavigationBarHidden = true
     }
 
     override func didReceiveMemoryWarning() {
@@ -58,8 +60,7 @@ class DoctorChatListViewController: UIViewController, UITableViewDataSource, UIT
         
         let lastMessage = searchResults[indexPath.row].messages.sorted(byKeyPath: "entryDate", ascending: false).first
         
-        
-        cell.title?.text = searchResults[indexPath.row].otherUser?.name
+        cell.title?.text = searchResults[indexPath.row].otherUser!.name
         
         if searchResults[indexPath.row].otherUser != nil {
             if let userId = searchResults[indexPath.row].otherUser?.userId {
@@ -67,7 +68,9 @@ class DoctorChatListViewController: UIViewController, UITableViewDataSource, UIT
             }
         }
         
-        cell.detail.text = lastMessage?.contents
+        if lastMessage != nil {
+            cell.detail.text = DateUtils.stringFromDate(lastMessage!.entryDate) + "\n" + lastMessage!.contents
+        }
         
         cell.midokuNum.alpha = 0
         var count = 0
@@ -153,7 +156,7 @@ class DoctorChatListViewController: UIViewController, UITableViewDataSource, UIT
     }
 }
 
-extension DoctorChatListViewController: MessageLoadDelegate {
+extension DoctorChatListViewController: MessageDelegate {
    func messageUpdated(msgModel: MessageModel) {
         array = RealmManager.getInstance().getChatRoomModels()
         searchResults.removeAll()
@@ -172,4 +175,19 @@ extension DoctorChatListViewController: MessageLoadDelegate {
             table.reloadData()
         }
     }
+}
+
+extension DoctorChatListViewController: FBUserManagerImageDelegate, FBUserManagerDelegate {
+    func compTopImg(userId: String) {
+        table.reloadData()
+    }
+    
+    func compIconImg(userId: String) {
+        table.reloadData()
+    }
+    
+    func userUpdated(userModel: UserModel) {
+        table.reloadData()
+    }
+    
 }

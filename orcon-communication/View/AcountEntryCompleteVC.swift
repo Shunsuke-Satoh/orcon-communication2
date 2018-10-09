@@ -29,6 +29,7 @@ class AcountEntryCompleteViewController: UIViewController {
         if userModel?.userType == Constant.userTypeCustomer {
             performSegue(withIdentifier: "toRequestSegue", sender: nil)
         } else {
+            
             performSegue(withIdentifier: "toMainSegue", sender: nil)
         }
     }

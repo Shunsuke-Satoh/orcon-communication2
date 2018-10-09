@@ -72,6 +72,7 @@ class FBStorageManager: NSObject {
                 ret = img!
             }
             callback(ret)
+            
         }
     }
     
@@ -85,3 +86,4 @@ class FBStorageManager: NSObject {
         return Constant.storageUserPath + "/" + userId + "/" + Constant.topImgName
     }
 }
+
