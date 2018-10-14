@@ -74,6 +74,18 @@ final class UserDefaultManager {
     func loadImageForOwnIcon() -> UIImage? {
         return loadImageIcon(userId: getOwnUserId())
     }
+    // ウォークスルー済みをセットする
+    func setWalkthrough() -> Void {
+        UserDefaults.standard.set(true, forKey: "walkthroughDone")
+    }
+    
+    // ウォークスルー済みか判定する
+    func isWalkthroughDone() -> Bool {
+        if UserDefaults.standard.string(forKey: "walkthroughDone") != nil {
+            return true
+        }
+        return false
+    }
     
     // ユーザIDを元にアイコン画像を保存する
     func saveImageIcon(userId: String, uiImage: UIImage) -> Void {

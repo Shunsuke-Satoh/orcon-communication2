@@ -10,7 +10,7 @@ import RealmSwift
 
 class RealmManager {
     static var own: RealmManager?
-    static var config = Realm.Configuration(schemaVersion: 13)
+    static var config = Realm.Configuration(schemaVersion: 14)
     
     var userDM: UserDefaultManager?
     static let INSERT = 0
@@ -108,7 +108,7 @@ class RealmManager {
         }
     }
     
-    func insertUpdateUser(userId:String, userType:String, name:String, hira:String, tel:String, email:String,  clinicName:String, clinicAddress:String, rooms:[String], requestDoctorId:String, entryDate:Date, status:Int, deleteDate:Date?) {
+    func insertUpdateUser(userId:String, userType:String, name:String, hira:String, tel:String, email:String,  clinicName:String, clinicAddress:String, rooms:[String], requestDoctorId:String, entryDate:Date, status:Int, deleteDate:Date?, purchaseLimitDate:Date?) {
         
         do {
             let realm = try Realm(configuration:RealmManager.config)
@@ -127,6 +127,7 @@ class RealmManager {
             userModel.status = status
             userModel.requestDoctorId = requestDoctorId
             userModel.deleteDate = deleteDate
+            userModel.purchaseLimitDate = purchaseLimitDate
             
             for room in rooms {
                 userModel.chatRooms.append(room)
@@ -396,7 +397,6 @@ class RealmManager {
     }
     // メッセージを保存する
     func insertMessage(msgId:String, roomId:String, msg: NSDictionary) -> MessageModel{
-        print("START "+#function)
         let chatRoomModel = getChatRoomModelByRoomId(roomId: roomId)
         let messageModel = MessageModel()
         messageModel.messageId = msgId
@@ -414,7 +414,6 @@ class RealmManager {
             let realm = try Realm(configuration:RealmManager.config)
             try! realm.write {
                 if chatRoomModel?.messages.filter("messageId == '" + msgId + "'").count == 0 {
-                    print("APPEND "+msgId)
                 chatRoomModel?.messages.append(messageModel)
                 }
             }

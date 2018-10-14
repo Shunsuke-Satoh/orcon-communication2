@@ -48,6 +48,7 @@ class UserModel: Object {
     @objc dynamic var status = 0
     @objc dynamic var deleteDate: Date?
     @objc dynamic var requestDoctorId = ""
+    @objc dynamic var purchaseLimitDate: Date? // ドクター側で使えるけ期限、課金で伸ばせる
     let chatRooms = List<String>()
     
     override static func primaryKey() -> String? {
@@ -69,6 +70,7 @@ class UserModel: Object {
         mdl.status = status
         mdl.deleteDate = deleteDate
         mdl.requestDoctorId = requestDoctorId
+        mdl.purchaseLimitDate = purchaseLimitDate
         for room in chatRooms {
             mdl.chatRooms.append(room)
         }
@@ -155,6 +157,26 @@ class CalKindModel: Object{
             kindDesc += "\n休診時間\n" + kindSub2
         } else {
             kindDesc += "\n\n\n"
+        }
+        
+        return kindDesc
+    }
+    
+    func getAllTitleForChat()->String{
+        
+        if allCloseFlg {
+            return getTitle()
+        }
+        
+        var kindDesc = ""
+        
+        let kindSub1 = CommonUtils.hh_mm(open[0].StartHHmm) + "〜" + CommonUtils.hh_mm(open[0].EndHHmm)
+        
+        kindDesc += kindSub1
+        
+        if closeFlg {
+            let kindSub2 = CommonUtils.hh_mm(close[0].StartHHmm) + "〜" + CommonUtils.hh_mm(close[0].EndHHmm)
+            kindDesc += "\n(休) \n" + kindSub2
         }
         
         return kindDesc

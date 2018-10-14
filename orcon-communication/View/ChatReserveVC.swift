@@ -14,7 +14,6 @@ class ChatReserveVC: UIViewController {
 
     @IBOutlet weak var calendar: FSCalendar!
     
-    @IBOutlet weak var table: UITableView!
     @IBOutlet weak var img1: EnhancedCircleImageView!
     @IBOutlet weak var img2: EnhancedCircleImageView!
     @IBOutlet weak var img3: EnhancedCircleImageView!
@@ -23,23 +22,59 @@ class ChatReserveVC: UIViewController {
     @IBOutlet weak var lbl2: UILabel!
     @IBOutlet weak var lbl3: UILabel!
     @IBOutlet weak var lbl4: UILabel!
+    @IBOutlet weak var kibou1Lbl: UILabel!
+    @IBOutlet weak var kibou2Lbl: UILabel!
+    @IBOutlet weak var kibou3Lbl: UILabel!
+    @IBOutlet weak var kibou1Btn: UIButton!
+    @IBOutlet weak var kibou2Btn: UIButton!
+    @IBOutlet weak var kibou3Btn: UIButton!
+    @IBOutlet weak var kibou1AMBtn: UIButton!
+    @IBOutlet weak var kibou2AMBtn: UIButton!
+    @IBOutlet weak var kibou3AMBtn: UIButton!
+    @IBOutlet weak var kibou1PMBtn: UIButton!
+    @IBOutlet weak var kibou2PMBtn: UIButton!
+    @IBOutlet weak var kibou3PMBtn: UIButton!
+    
+    @IBOutlet weak var centerLine1: centerLineView!
+    @IBOutlet weak var centerLine2: centerLineView!
     
     var imgs: [EnhancedCircleImageView] = []
     var lbls: [UILabel] = []
     
+    var kibouLbls: [UILabel] = []
+    var kibouBtns: [UIButton] = []
+    var kibouAMBtns: [UIButton] = []
+    var kibouPMBtns: [UIButton] = []
+    var selectedDates: [Date] = [Date(),Date(),Date()]
+    
     var schedules: [ScheduledDateModel] = []
     var kinds:[CalKindModel] = []
-    var selectedDates:[Date] = []
-    var selectedAm:[Bool] = []
-    var selectedPm:[Bool] = []
+    var currentKibouPos = 0
     var doctorId: String!
     var formatter: DateFormatter!
     
+    let selectedColor = UIColor(red: 0/255, green: 160/255, blue: 233/255, alpha: 1)
+    let nonSelectedColor = UIColor(red: 200/255
+        , green:200/255, blue: 200/255, alpha: 1)
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        // センターラインを透明化
+        centerLine1.isOpaque = false
+        centerLine2.isOpaque = false
+        
+        // タイトルセット
+        navigationItem.title = "予約希望日を選択"
+        
+        if CommonUtils.isUserTypeDoctor() {
+            navigationItem.title = "予約おすすめ日を選択"
+        }
+        
+        // 日付フォーマッタ
         formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ja_JP")
         
+        // スケジュールのロード
         let realmDM = RealmManager.getInstance()
 
         if CommonUtils.isUserTypeUser() {
@@ -51,6 +86,7 @@ class ChatReserveVC: UIViewController {
         schedules = realmDM.getSchedulesByDoctorId(doctorId: doctorId)
         kinds = realmDM.getKindsByDoctorId(doctorId: doctorId)
         
+        // 処理しやすいように配列化
         lbls.append(lbl1)
         lbls.append(lbl2)
         lbls.append(lbl3)
@@ -61,21 +97,61 @@ class ChatReserveVC: UIViewController {
         imgs.append(img3)
         imgs.append(img4)
         
-        // 初期化
-        for (indx,lbl) in lbls.enumerated() {
-            lbl.text = "\n\n\n"
-            imgs[indx].isHidden = true
-        }
+        kibouLbls.append(kibou1Lbl)
+        kibouLbls.append(kibou2Lbl)
+        kibouLbls.append(kibou3Lbl)
         
-        // ４個以上は取らない
+        kibouBtns.append(kibou1Btn)
+        kibouBtns.append(kibou2Btn)
+        kibouBtns.append(kibou3Btn)
+        
+        kibouAMBtns.append(kibou1AMBtn)
+        kibouAMBtns.append(kibou2AMBtn)
+        kibouAMBtns.append(kibou3AMBtn)
+        
+        kibouPMBtns.append(kibou1PMBtn)
+        kibouPMBtns.append(kibou2PMBtn)
+        kibouPMBtns.append(kibou3PMBtn)
+        
+        // 初期化
+        // 種別数 4つ固定なので不要かな
         while kinds.count > 4 {
             _ = kinds.popLast()
         }
-        
+        // 種別の色、テキスト
         for (indx,kind) in kinds.enumerated() {
-            lbls[indx].text = kind.getAllTitle()
+            lbls[indx].text = kind.getAllTitleForChat()
             imgs[indx].backgroundColor = CommonUtils.uiColor(kind)
-            imgs[indx].isHidden = false
+        }
+        
+        // 希望日
+        if CommonUtils.isUserTypeDoctor() {
+            for (indx, kiboulbl) in kibouLbls.enumerated() {
+                kiboulbl.text = "第" + (indx + 1).description + "おすすめ日"
+            }
+        }
+        
+        // 希望ボタン
+        for kibouBtn in kibouBtns {
+            kibouBtn.setTitle("未選択", for: .normal)
+            kibouBtn.layer.borderColor = UIColor.lightGray.cgColor
+        }
+        setKibouBtn(0)
+        
+        // AM,PMボタン
+        let ampmBtns = kibouAMBtns + kibouPMBtns
+        
+        for apmpBtn in ampmBtns {
+            apmpBtn.isSelected = false
+            setColor(apmpBtn)
+        }
+    }
+    
+    func setColor(_ btn:UIButton) {
+        if btn.isSelected {
+            btn.backgroundColor = selectedColor
+        } else {
+            btn.backgroundColor = nonSelectedColor
         }
     }
     
@@ -89,19 +165,23 @@ class ChatReserveVC: UIViewController {
             message += "予約おすすめ\n"
         }
         
-        for (indx,_) in selectedDates.enumerated() {
-            var text = "第" + (indx + 1).description + "希望" + ":"
+        for (indx, kibouBtn) in kibouBtns.enumerated() {
+            if kibouBtn.titleLabel?.text == "未選択" {
+                break
+            }
+            var text = kibouLbls[indx].text! + ":"
             text += DateUtils.stringMMddFromDate(selectedDates[indx]) + "（" + formatter.weekdaySymbols[getWeekIdx(selectedDates[indx]) - 1].prefix(1) + "） "
             
-            if selectedAm[indx] && selectedPm[indx]{
+            if kibouAMBtns[indx].isSelected && kibouPMBtns[indx].isSelected {
                 text += "終日"
-            } else if selectedAm[indx] {
+            } else if kibouAMBtns[indx].isSelected {
                 text += "午前中"
-            } else if selectedPm[indx] {
+            } else if kibouPMBtns[indx].isSelected {
                 text += "午後"
             }
             
             message += text + "\n"
+            
         }
         
         let navi = self.navigationController!
@@ -109,6 +189,8 @@ class ChatReserveVC: UIViewController {
         let vc = navi.viewControllers[pre] as! ChatViewController
         // メッセージ欄に追加
         vc.messageInputBar.inputTextView.text += message
+        // メイン画面からいきなり来た時はチャットのviewDidLoadが呼ばれるのでセット
+        vc.reserveMessage = message
         self.navigationController!.popViewController(animated: true)
         
     }
@@ -123,49 +205,40 @@ class ChatReserveVC: UIViewController {
         let date = Calendar.current.date(byAdding: .month, value: +1, to: calendar.currentPage)
         calendar.setCurrentPage(date! , animated: true)
     }
-    // MARK: - Navigation
-
-}
-
-extension ChatReserveVC:UITableViewDataSource, UITableViewDelegate{
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return selectedDates.count
+    
+    // AMPMボタンが押された時の共通処理
+    @IBAction func tapAmPmBtn(_ btn:UIButton) {
+        if btn.isSelected {
+            btn.isSelected = false
+        } else {
+            btn.isSelected = true
+        }
+        // 色も変えようね
+        setColor(btn)
+    }
+    func setKibouBtn(_ pos:Int) {
+        for btn in kibouBtns {
+            btn.layer.borderWidth = 0
+            btn.backgroundColor = UIColor.clear
+        }
+        kibouBtns[pos].layer.borderWidth = 1
+//        kibouBtns[pos].backgroundColor = UIColor(red: 240/255, green: 240/255, blue: 240/255, alpha: 1)
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ChatReserveCell") as! ChatReserveCell
-        
-        cell.date = selectedDates[indexPath.row]
-        cell.indexPath = indexPath
-        cell.delegate = self
-        cell.title.text = "第" + (indexPath.row + 1).description + "希望"
-        cell.subTitle.text = DateUtils.stringMMddFromDate(cell.date) + "（" + formatter.weekdaySymbols[getWeekIdx(cell.date) - 1].prefix(1) + "）"
-        cell.amBtn.isSelected = selectedAm[indexPath.row]
-        cell.pmBtn.isSelected = selectedPm[indexPath.row]
-        cell.setColors()
-        
-        return cell
+    @IBAction func tapKibou1Btn(_ sender: UIButton) {
+        currentKibouPos = 0
+        setKibouBtn(currentKibouPos)
+    }
+    @IBAction func tapKibou2Btn(_ sender: UIButton) {
+        currentKibouPos = 1
+        setKibouBtn(currentKibouPos)
+    }
+    @IBAction func tapKibou3Btn(_ sender: UIButton) {
+        currentKibouPos = 2
+        setKibouBtn(currentKibouPos)
     }
     
     
-}
-
-// AM,PM,削除ボタン
-extension ChatReserveVC:ChatReserveCellDelegate {
-    func minus(_ indexPath: IndexPath) {
-        selectedDates.remove(at: indexPath.row)
-        selectedAm.remove(at: indexPath.row)
-        selectedPm.remove(at: indexPath.row)
-        table.reloadData()
-    }
-    
-    func tapAM(_ isSelected: Bool, _ indexPath: IndexPath) {
-        selectedAm[indexPath.row] = isSelected
-    }
-    
-    func tapPM(_ isSelected: Bool, _ indexPath: IndexPath) {
-        selectedPm[indexPath.row] = isSelected
-    }
 }
 
 extension ChatReserveVC:FSCalendarDelegate ,FSCalendarDataSource,FSCalendarDelegateAppearance {
@@ -173,25 +246,40 @@ extension ChatReserveVC:FSCalendarDelegate ,FSCalendarDataSource,FSCalendarDeleg
     // カレンダーがタップされた時の処理
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
         
-        // 画面上に保持している全スケジュールからタップしようとしているスケジュールがあるか調べる
+        // 画面上に保持している全スケジュールから休診日かどうか調べる
         let dayYYYYMMdd = DateUtils.stringYYYYMMddFromDate(date)
         if let mdl = schedules.filter({scheMdl -> Bool in
             return scheMdl.id_yyyymmdd == dayYYYYMMdd
             
         }).first {
-            // 見つかれば何もしない
-            if mdl.kind != nil {
-                if mdl.kind!.allCloseFlg {
-                    return
-                }
+            if mdl.kind != nil && mdl.kind!.allCloseFlg {
+                // 休診日は選択できない
+                return
             }
         }
         
-        // 候補日に追加する
-        selectedDates.append(date)
-        selectedAm.append(true)
-        selectedPm.append(true)
-        table.reloadData()
+        // 候補日を上書きする
+        // ボタンタイトル変更
+        let title = DateUtils.stringMMddFromDate(date) + "（" + formatter.weekdaySymbols[getWeekIdx(date) - 1].prefix(1) + "） "
+        kibouBtns[currentKibouPos].setTitle(title, for: .normal)
+        
+        // AMPMを全てセレクト状態にする
+        kibouAMBtns[currentKibouPos].isSelected = true
+        kibouPMBtns[currentKibouPos].isSelected = true
+        setColor(kibouAMBtns[currentKibouPos])
+        setColor(kibouPMBtns[currentKibouPos])
+        
+        // 選択日を更新
+        selectedDates[currentKibouPos] = date
+        
+        // フォーカスを次の希望順位にずらす 最後まで行ったら0に戻る
+        currentKibouPos += 1
+        if currentKibouPos >= selectedDates.count {
+            currentKibouPos = 0
+        }
+        setKibouBtn(currentKibouPos)
+        
+        calendar.reloadData()
     }
     
     // 種別を見て色を表示する
@@ -210,6 +298,34 @@ extension ChatReserveVC:FSCalendarDelegate ,FSCalendarDataSource,FSCalendarDeleg
         }
         
         return nil
+    }
+    
+    // 選択された日に目印をつける
+    func calendar(_ calendar: FSCalendar, subtitleFor date: Date) -> String? {
+        for (indx, d) in selectedDates.enumerated() {
+            if d == date {
+                return "第" + (indx + 1).description
+            }
+        }
+        return nil
+    }
+    
+    // 縦横比が変わった時
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        var newHeight = size.height * 0.50
+        
+        if size.height > size.width {
+           newHeight = size.height * 0.54
+        }
+        
+        calendar.frame = CGRect(origin: calendar.frame.origin, size: CGSize(width: newHeight, height: newHeight))
+        
+        let newCalHeight = newHeight - calendar.preferredHeaderHeight - calendar.preferredWeekdayHeight
+        
+        calendar.contentView.frame = CGRect(origin: calendar.contentView.frame.origin, size: CGSize(width:newHeight,height:newCalHeight))
+        calendar.daysContainer.frame = CGRect(origin: calendar.daysContainer.frame.origin, size: CGSize(width:newHeight,height:newCalHeight))
+        calendar.collectionView.frame = CGRect(origin: calendar.collectionView.frame.origin, size: CGSize(width:newHeight,height:newCalHeight))
+        calendar.reloadData()
     }
     
     // 祝日判定

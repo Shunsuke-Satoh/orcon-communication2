@@ -25,6 +25,7 @@ class FBUserManager {
     static let dbUserEntryDate = "entry_date"
     static let dbUserStatus = "status" /* 0:リクエスト中, 1:治療中, 2:治療完了 */
     static let dbUserDeleteDate = "delete_date"
+    static let dbUserPurChaseLimitDate = "purchase_limit_date"
     
     static let dbDoctor = "doctor"
     static let dbDoctorName = "name"
@@ -140,6 +141,13 @@ class FBUserManager {
             if let doctorId = userFB[FBUserManager.dbUserRequestdoctorid] as? String {
                 ret.requestDoctorId = doctorId
             }
+            if let purchaseLimitDate = userFB[FBUserManager.dbUserPurChaseLimitDate] as? String {
+                
+                // 課金情報の更新は自分がドクターかつ自分の情報取得の時、以外いらない
+                if ret.userId == self.userDM.getOwnUserId() && ret.userType == Constant.userTypeDoctor {
+                ret.purchaseLimitDate = DateUtils.dateFromString(purchaseLimitDate)
+                }
+            }
             
             var rooms:[String] = []
             
@@ -171,20 +179,16 @@ class FBUserManager {
             }
             
             // Realm保存
-            self.realmM.insertUpdateUser(userId: ret.userId, userType: ret.userType, name: ret.name, hira: ret.hira, tel: ret.tel, email: ret.email, clinicName: ret.clinicName, clinicAddress: ret.clinicAddress, rooms: rooms, requestDoctorId: ret.requestDoctorId, entryDate: ret.entryDate!,status:ret.status, deleteDate: ret.deleteDate)
+            self.realmM.insertUpdateUser(userId: ret.userId, userType: ret.userType, name: ret.name, hira: ret.hira, tel: ret.tel, email: ret.email, clinicName: ret.clinicName, clinicAddress: ret.clinicAddress, rooms: rooms, requestDoctorId: ret.requestDoctorId, entryDate: ret.entryDate!,status:ret.status, deleteDate: ret.deleteDate, purchaseLimitDate: ret.purchaseLimitDate)
             
             isFinish = true
             
             // 成功です！　変更監視とプッシュ通知用のトークン監視もしておきますね！
             callback("")
             
-            if userId != self.userDM.getOwnUserId() {
-                self.setObserver(userId)
-            }
-            else {
-                // トピックにトークンを登録
-                CommonUtils.getInstance().signInTockenToChat(false)
-            }
+            self.setObserver(userId)
+            // トピックにトークンを登録
+            CommonUtils.getInstance().signInTockenToChat(false)
         })
         
         // タイムアウト検知
@@ -276,7 +280,12 @@ class FBUserManager {
             else if key == FBUserManager.dbUserRequestdoctorid {
                 newMdl.requestDoctorId = snapshot.value as! String
             }
-            
+            else if key == FBUserManager.dbUserPurChaseLimitDate {
+                // 課金情報の更新はドクター以外いらない
+                if CommonUtils.isUserTypeDoctor() {
+                    newMdl.purchaseLimitDate = DateUtils.dateFromString(snapshot.value as! String)
+                }
+            }
             // realm登録
             self.realmM.updateUser(newMdl)
             self.delegate?.userUpdated(userModel: newMdl)
@@ -309,6 +318,14 @@ class FBUserManager {
         if let handle = obserbers[userId] {
             ref.child(userId).removeObserver(withHandle: handle)
         }
+        
+        // 再取得もできるように取得済みリストからも削除
+        for (indx, val) in getDatas.enumerated() {
+            if val == userId {
+                getDatas.remove(at: indx)
+                break
+            }
+        }
     }
     
     
@@ -324,7 +341,7 @@ class FBUserManager {
     ///   - password: password
     ///   - clinicName: clinicName
     ///   - clinicAddress: clinicAddress
-    func uploadUserAndDoctor(userId:String, userType:String, name:String, hira:String, tel:String, email:String, password:String, clinicName:String, clinicAddress:String) {
+    func uploadUserAndDoctor(userId:String, userType:String, name:String, hira:String, tel:String, email:String, password:String, clinicName:String, clinicAddress:String, purchaseLimitDate: Date?) {
         
         var profile = Dictionary<String,Any>()
         profile[FBUserManager.dbUserName] = name
@@ -342,7 +359,12 @@ class FBUserManager {
             // 医者情報にアップロード
             refDoc.child(userId).setValue(profile)
             
+            // 以下は医者情報には不要で、ユーザ情報に保存するもの
+            // トップ画像
             profile[FBUserManager.dbUserTopimgupdate] = DateUtils.stringFromDate(Date())
+            // 無料期間一ヶ月
+            profile[FBUserManager.dbUserPurChaseLimitDate] = DateUtils.stringFromDate(purchaseLimitDate!)
+            
             
             // デフォルトの予約種別を登録する
             FBRealTimeDataBaseManager.getInstance().insertDefaultKind()
@@ -414,6 +436,9 @@ class FBUserManager {
         ref.child(otherId + "/" + FBUserManager.dbUserRooms + "/" + roomId).setValue(ownId)
     }
     
+    func updatePurchaseLimitTime(_ ownId:String, newLimitDate:Date) {
+        ref.child(ownId + "/" + FBUserManager.dbUserPurChaseLimitDate).setValue(DateUtils.stringFromDate(newLimitDate))
+    }
     
     
     /// 先生情報を全量取得する（ユーザのリクエスト準備）
@@ -454,13 +479,24 @@ class FBUserManager {
                 
                 for (userId, doctor) in doctors {
                     let uid = userId as! String
-                    let doctorInfo = doctor as! DataSnapshot
-                    let clinicName = doctorInfo.childSnapshot(forPath: FBUserManager.dbDoctorClinicName).value as! String
-                    let clinicAddress = doctorInfo.childSnapshot(forPath: FBUserManager.dbDoctorClinicAddress).value as! String
+                    let doctorInfo = doctor as! NSDictionary
+                    
+                    let clinicName = doctorInfo[FBUserManager.dbDoctorClinicName] as! String
+                    let clinicAddress = doctorInfo[FBUserManager.dbDoctorClinicAddress] as! String
                     
                     if !clinicName.contains(keyWord) && !clinicAddress.contains(keyWord){
                         continue
                     }
+                    
+                    
+                    
+//                    let doctorInfo = doctor as! DataSnapshot
+//                    let clinicName = doctorInfo.childSnapshot(forPath: FBUserManager.dbDoctorClinicName).value as! String
+//                    let clinicAddress = doctorInfo.childSnapshot(forPath: FBUserManager.dbDoctorClinicAddress).value as! String
+//                    
+//                    if !clinicName.contains(keyWord) && !clinicAddress.contains(keyWord){
+//                        continue
+//                    }
                     
                     dispatchGroup.enter()
                     DispatchQueue.main.async(group: dispatchGroup) {

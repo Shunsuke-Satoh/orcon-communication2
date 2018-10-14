@@ -27,6 +27,8 @@ open class EnhancedCircleImageView: UIImageView {
     open override func layoutSubviews() {
         super.layoutSubviews()
         self.layer.cornerRadius = self.frame.height / 2.0
+        self.layer.borderColor = UIColor.lightGray.cgColor
+        self.layer.borderWidth = 1
     }
 }
 

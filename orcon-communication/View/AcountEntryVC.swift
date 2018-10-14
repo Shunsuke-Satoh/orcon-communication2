@@ -54,14 +54,6 @@ class AcountEntryViewController: UIViewController, UIImagePickerControllerDelega
         // 入力フォームのアラート初期化
         confirmLbl.text = ""
         
-        // ボタンの見た目
-        confirm.setTitleColor(UIColor.black, for: .normal)
-        confirm.backgroundColor = UIColor.white
-        confirm.layer.cornerRadius = 20
-        confirm.layer.borderWidth = 1
-        confirm.layer.shadowOpacity = 0.5
-        confirm.layer.shadowOffset = CGSize(width:2,height:2)
-        
         // 入力フォームのバリデーション
         swiftCop.addSuspect(Suspect(view: nameTxtF, sentence: "入力必須です。", trial: Trial.length(.minimum, 1)))
         swiftCop.addSuspect(Suspect(view: hiraTxtF, sentence: "入力必須です。", trial: Trial.length(.minimum, 1)))

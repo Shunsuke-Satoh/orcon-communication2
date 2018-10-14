@@ -18,6 +18,16 @@
 		604B3C6D215C91E70028E3B0 /* UserRequestCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604B3C6C215C91E70028E3B0 /* UserRequestCell.swift */; };
 		604B3C6F215CE63D0028E3B0 /* UserRequestPopVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604B3C6E215CE63D0028E3B0 /* UserRequestPopVC.swift */; };
 		604B3C75215DFCE70028E3B0 /* CalendarKindCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604B3C74215DFCE70028E3B0 /* CalendarKindCell.swift */; };
+		605D6EB9216F38FA008D4794 /* verticalLineV.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605D6EB8216F38FA008D4794 /* verticalLineV.swift */; };
+		605D6EBB216F42E5008D4794 /* viewAsBtn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605D6EBA216F42E5008D4794 /* viewAsBtn.swift */; };
+		605D6EBD21703A08008D4794 /* PurchaseInAppVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605D6EBC21703A08008D4794 /* PurchaseInAppVC.swift */; };
+		60606446216C39E700C7EFEF /* rectButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60606445216C39E700C7EFEF /* rectButton.swift */; };
+		60606448216C7BAB00C7EFEF /* imageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60606447216C7BAB00C7EFEF /* imageButton.swift */; };
+		6060644A216C827D00C7EFEF /* centerLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60606449216C827D00C7EFEF /* centerLineView.swift */; };
+		6060644C216C8C2500C7EFEF /* circleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6060644B216C8C2500C7EFEF /* circleLabel.swift */; };
+		6060644E216C8EFA00C7EFEF /* imageRectButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6060644D216C8EFA00C7EFEF /* imageRectButton.swift */; };
+		60606450216CAF8C00C7EFEF /* imageRoundButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6060644F216CAF8C00C7EFEF /* imageRoundButton.swift */; };
+		60606452216CBDA500C7EFEF /* roundButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60606451216CBDA500C7EFEF /* roundButton.swift */; };
 		606FC8CA2148B9F3008B4AEB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606FC8C92148B9F3008B4AEB /* AppDelegate.swift */; };
 		606FC8CC2148B9F3008B4AEB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606FC8CB2148B9F3008B4AEB /* ViewController.swift */; };
 		606FC8CF2148B9F3008B4AEB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 606FC8CD2148B9F3008B4AEB /* Main.storyboard */; };
@@ -36,18 +46,17 @@
 		606FC909214A361D008B4AEB /* DoctorCalendarVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606FC908214A361D008B4AEB /* DoctorCalendarVC.swift */; };
 		606FC90B214A3EC8008B4AEB /* DoctorCalendarSetVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606FC90A214A3EC8008B4AEB /* DoctorCalendarSetVC.swift */; };
 		606FC90D214A5D31008B4AEB /* PushFadeSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606FC90C214A5D31008B4AEB /* PushFadeSegue.swift */; };
+		60873905216EE00C00BB2E01 /* UserRequestSendVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60873904216EE00C00BB2E01 /* UserRequestSendVC.swift */; };
 		6093A92D2168890000AFDB85 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6093A92C2168890000AFDB85 /* StoreKit.framework */; };
 		6093A92F2168AB6600AFDB85 /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6093A92E2168AB6600AFDB85 /* PurchaseManager.swift */; };
-		6093A9312168C50A00AFDB85 /* UserRequestDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6093A9302168C50A00AFDB85 /* UserRequestDetailVC.swift */; };
-		6093A9332168D37300AFDB85 /* UserWalk1VC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6093A9322168D37300AFDB85 /* UserWalk1VC.swift */; };
-		6093A9352168D39700AFDB85 /* UserWalk3VC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6093A9342168D39700AFDB85 /* UserWalk3VC.swift */; };
-		6093A9372168D3A500AFDB85 /* UserWalk2VC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6093A9362168D3A500AFDB85 /* UserWalk2VC.swift */; };
 		6093A9392168D64100AFDB85 /* UserWalkVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6093A9382168D64100AFDB85 /* UserWalkVC.swift */; };
 		6093A93B2168D90200AFDB85 /* UserWalk.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6093A93A2168D90200AFDB85 /* UserWalk.storyboard */; };
 		60A4F5C5215B116B005A99CB /* DoctorRequestMVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A4F5C4215B116B005A99CB /* DoctorRequestMVC.swift */; };
 		60A4F5C7215B17B2005A99CB /* TransferVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A4F5C6215B17B2005A99CB /* TransferVC.swift */; };
 		60AC8D1F214F2C3C0049AB11 /* FBStorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60AC8D1E214F2C3C0049AB11 /* FBStorageManager.swift */; };
 		60BD396D216305A600197D9D /* SettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BD396C216305A600197D9D /* SettingVC.swift */; };
+		60CE2789216F189700C46A28 /* UserThanksForEntryVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60CE2788216F189700C46A28 /* UserThanksForEntryVC.swift */; };
+		60CE278B216F18B900C46A28 /* UserThanksForRequestVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60CE278A216F18B900C46A28 /* UserThanksForRequestVC.swift */; };
 		60D0065C2168EF000041AB54 /* AccountEntry.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 60D0065B2168EF000041AB54 /* AccountEntry.storyboard */; };
 		60D0065E2168EF510041AB54 /* DoctorWalk.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 60D0065D2168EF510041AB54 /* DoctorWalk.storyboard */; };
 		60D006602168F29C0041AB54 /* DoctorWalkVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D0065F2168F29C0041AB54 /* DoctorWalkVC.swift */; };
@@ -104,6 +113,16 @@
 		604B3C6C215C91E70028E3B0 /* UserRequestCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRequestCell.swift; sourceTree = "<group>"; };
 		604B3C6E215CE63D0028E3B0 /* UserRequestPopVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRequestPopVC.swift; sourceTree = "<group>"; };
 		604B3C74215DFCE70028E3B0 /* CalendarKindCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarKindCell.swift; sourceTree = "<group>"; };
+		605D6EB8216F38FA008D4794 /* verticalLineV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = verticalLineV.swift; sourceTree = "<group>"; };
+		605D6EBA216F42E5008D4794 /* viewAsBtn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = viewAsBtn.swift; sourceTree = "<group>"; };
+		605D6EBC21703A08008D4794 /* PurchaseInAppVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseInAppVC.swift; sourceTree = "<group>"; };
+		60606445216C39E700C7EFEF /* rectButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = rectButton.swift; sourceTree = "<group>"; };
+		60606447216C7BAB00C7EFEF /* imageButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = imageButton.swift; sourceTree = "<group>"; };
+		60606449216C827D00C7EFEF /* centerLineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = centerLineView.swift; sourceTree = "<group>"; };
+		6060644B216C8C2500C7EFEF /* circleLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = circleLabel.swift; sourceTree = "<group>"; };
+		6060644D216C8EFA00C7EFEF /* imageRectButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = imageRectButton.swift; sourceTree = "<group>"; };
+		6060644F216CAF8C00C7EFEF /* imageRoundButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = imageRoundButton.swift; sourceTree = "<group>"; };
+		60606451216CBDA500C7EFEF /* roundButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = roundButton.swift; sourceTree = "<group>"; };
 		606FC8C62148B9F3008B4AEB /* orcon-communication.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "orcon-communication.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		606FC8C92148B9F3008B4AEB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		606FC8CB2148B9F3008B4AEB /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -128,18 +147,17 @@
 		606FC908214A361D008B4AEB /* DoctorCalendarVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoctorCalendarVC.swift; sourceTree = "<group>"; };
 		606FC90A214A3EC8008B4AEB /* DoctorCalendarSetVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoctorCalendarSetVC.swift; sourceTree = "<group>"; };
 		606FC90C214A5D31008B4AEB /* PushFadeSegue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushFadeSegue.swift; sourceTree = "<group>"; };
+		60873904216EE00C00BB2E01 /* UserRequestSendVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRequestSendVC.swift; sourceTree = "<group>"; };
 		6093A92C2168890000AFDB85 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		6093A92E2168AB6600AFDB85 /* PurchaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseManager.swift; sourceTree = "<group>"; };
-		6093A9302168C50A00AFDB85 /* UserRequestDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRequestDetailVC.swift; sourceTree = "<group>"; };
-		6093A9322168D37300AFDB85 /* UserWalk1VC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserWalk1VC.swift; sourceTree = "<group>"; };
-		6093A9342168D39700AFDB85 /* UserWalk3VC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserWalk3VC.swift; sourceTree = "<group>"; };
-		6093A9362168D3A500AFDB85 /* UserWalk2VC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserWalk2VC.swift; sourceTree = "<group>"; };
 		6093A9382168D64100AFDB85 /* UserWalkVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserWalkVC.swift; sourceTree = "<group>"; };
 		6093A93A2168D90200AFDB85 /* UserWalk.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = UserWalk.storyboard; sourceTree = "<group>"; };
 		60A4F5C4215B116B005A99CB /* DoctorRequestMVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoctorRequestMVC.swift; sourceTree = "<group>"; };
 		60A4F5C6215B17B2005A99CB /* TransferVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferVC.swift; sourceTree = "<group>"; };
 		60AC8D1E214F2C3C0049AB11 /* FBStorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FBStorageManager.swift; sourceTree = "<group>"; };
 		60BD396C216305A600197D9D /* SettingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingVC.swift; sourceTree = "<group>"; };
+		60CE2788216F189700C46A28 /* UserThanksForEntryVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserThanksForEntryVC.swift; sourceTree = "<group>"; };
+		60CE278A216F18B900C46A28 /* UserThanksForRequestVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserThanksForRequestVC.swift; sourceTree = "<group>"; };
 		60D0065B2168EF000041AB54 /* AccountEntry.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = AccountEntry.storyboard; sourceTree = "<group>"; };
 		60D0065D2168EF510041AB54 /* DoctorWalk.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = DoctorWalk.storyboard; sourceTree = "<group>"; };
 		60D0065F2168F29C0041AB54 /* DoctorWalkVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoctorWalkVC.swift; sourceTree = "<group>"; };
@@ -222,9 +240,18 @@
 		60211998216614D200F42546 /* Design */ = {
 			isa = PBXGroup;
 			children = (
+				60606445216C39E700C7EFEF /* rectButton.swift */,
+				60606447216C7BAB00C7EFEF /* imageButton.swift */,
+				6060644D216C8EFA00C7EFEF /* imageRectButton.swift */,
+				6060644F216CAF8C00C7EFEF /* imageRoundButton.swift */,
+				60606451216CBDA500C7EFEF /* roundButton.swift */,
+				60606449216C827D00C7EFEF /* centerLineView.swift */,
 				606FC90C214A5D31008B4AEB /* PushFadeSegue.swift */,
 				60FF95D5215A680A0001FDA5 /* PopFadeSegue.swift */,
 				606FC906214A1F1B008B4AEB /* EnhancedCircleImageView.swift */,
+				6060644B216C8C2500C7EFEF /* circleLabel.swift */,
+				605D6EB8216F38FA008D4794 /* verticalLineV.swift */,
+				605D6EBA216F42E5008D4794 /* viewAsBtn.swift */,
 			);
 			path = Design;
 			sourceTree = "<group>";
@@ -255,8 +282,6 @@
 			isa = PBXGroup;
 			children = (
 				602119952164EEC100F42546 /* orcon-communication.entitlements */,
-				6093A9382168D64100AFDB85 /* UserWalkVC.swift */,
-				60D0065F2168F29C0041AB54 /* DoctorWalkVC.swift */,
 				606FC8CD2148B9F3008B4AEB /* Main.storyboard */,
 				60D0065D2168EF510041AB54 /* DoctorWalk.storyboard */,
 				6093A93A2168D90200AFDB85 /* UserWalk.storyboard */,
@@ -345,6 +370,7 @@
 		60FF95C82158ADF90001FDA5 /* Doctor */ = {
 			isa = PBXGroup;
 			children = (
+				60D0065F2168F29C0041AB54 /* DoctorWalkVC.swift */,
 				606FC904214A17FE008B4AEB /* DoctorChatListVC.swift */,
 				60FF95C1215892C90001FDA5 /* ChatBarCell.swift */,
 				606FC908214A361D008B4AEB /* DoctorCalendarVC.swift */,
@@ -354,6 +380,7 @@
 				60A4F5C4215B116B005A99CB /* DoctorRequestMVC.swift */,
 				604B3C6E215CE63D0028E3B0 /* UserRequestPopVC.swift */,
 				604B3C6C215C91E70028E3B0 /* UserRequestCell.swift */,
+				605D6EBC21703A08008D4794 /* PurchaseInAppVC.swift */,
 			);
 			path = Doctor;
 			sourceTree = "<group>";
@@ -363,10 +390,10 @@
 			children = (
 				60FF95CE2159F4070001FDA5 /* DoctorCell.swift */,
 				60FF95CC2159E9090001FDA5 /* UserRequestVC.swift */,
-				6093A9302168C50A00AFDB85 /* UserRequestDetailVC.swift */,
-				6093A9322168D37300AFDB85 /* UserWalk1VC.swift */,
-				6093A9362168D3A500AFDB85 /* UserWalk2VC.swift */,
-				6093A9342168D39700AFDB85 /* UserWalk3VC.swift */,
+				60873904216EE00C00BB2E01 /* UserRequestSendVC.swift */,
+				6093A9382168D64100AFDB85 /* UserWalkVC.swift */,
+				60CE2788216F189700C46A28 /* UserThanksForEntryVC.swift */,
+				60CE278A216F18B900C46A28 /* UserThanksForRequestVC.swift */,
 			);
 			path = User;
 			sourceTree = "<group>";
@@ -585,6 +612,7 @@
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
 				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/SCLAlertView/SCLAlertView.framework",
+				"${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftCop/SwiftCop.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftyStoreKit/SwiftyStoreKit.framework",
 				"${BUILT_PRODUCTS_DIR}/TextFieldEffects/TextFieldEffects.framework",
@@ -606,6 +634,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SCLAlertView.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SVProgressHUD.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftCop.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyStoreKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TextFieldEffects.framework",
@@ -642,13 +671,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				605D6EBB216F42E5008D4794 /* viewAsBtn.swift in Sources */,
 				603B68832160ECA1007232B6 /* ChatReserveCell.swift in Sources */,
 				60024A25215F16E80028CB20 /* DoctorCalendarKindVC.swift in Sources */,
 				606FC90B214A3EC8008B4AEB /* DoctorCalendarSetVC.swift in Sources */,
 				606FC907214A1F1B008B4AEB /* EnhancedCircleImageView.swift in Sources */,
 				604B3C6F215CE63D0028E3B0 /* UserRequestPopVC.swift in Sources */,
 				606FC9032149F918008B4AEB /* MainVC.swift in Sources */,
-				6093A9352168D39700AFDB85 /* UserWalk3VC.swift in Sources */,
 				603B68812160E99C007232B6 /* ChatReserveVC.swift in Sources */,
 				606FC90121490420008B4AEB /* AcountEntryCompleteVC.swift in Sources */,
 				60FF95B8215356A70001FDA5 /* DateUtils.swift in Sources */,
@@ -658,23 +687,29 @@
 				606FC8FD2148E3BF008B4AEB /* AcountEntryVC.swift in Sources */,
 				606FC8FF214902E9008B4AEB /* AcountEntryConfirmVC.swift in Sources */,
 				604B3C6D215C91E70028E3B0 /* UserRequestCell.swift in Sources */,
+				60CE2789216F189700C46A28 /* UserThanksForEntryVC.swift in Sources */,
 				6093A9392168D64100AFDB85 /* UserWalkVC.swift in Sources */,
 				60FF95B621534E4E0001FDA5 /* RealmDataModel.swift in Sources */,
-				6093A9332168D37300AFDB85 /* UserWalk1VC.swift in Sources */,
 				60FF95D6215A680A0001FDA5 /* PopFadeSegue.swift in Sources */,
 				60BD396D216305A600197D9D /* SettingVC.swift in Sources */,
 				60FF95C2215892C90001FDA5 /* ChatBarCell.swift in Sources */,
 				60FF95CD2159E9090001FDA5 /* UserRequestVC.swift in Sources */,
+				605D6EB9216F38FA008D4794 /* verticalLineV.swift in Sources */,
+				6060644A216C827D00C7EFEF /* centerLineView.swift in Sources */,
 				606FC8FB2148DB74008B4AEB /* WelcomeVC.swift in Sources */,
 				60FF95AE2151F3940001FDA5 /* ChatDataManager.swift in Sources */,
-				6093A9372168D3A500AFDB85 /* UserWalk2VC.swift in Sources */,
+				60606450216CAF8C00C7EFEF /* imageRoundButton.swift in Sources */,
+				60873905216EE00C00BB2E01 /* UserRequestSendVC.swift in Sources */,
 				6049706E2167674600E47681 /* FBUserManager.swift in Sources */,
+				60606446216C39E700C7EFEF /* rectButton.swift in Sources */,
 				6093A92F2168AB6600AFDB85 /* PurchaseManager.swift in Sources */,
-				6093A9312168C50A00AFDB85 /* UserRequestDetailVC.swift in Sources */,
+				60606452216CBDA500C7EFEF /* roundButton.swift in Sources */,
 				604B3C75215DFCE70028E3B0 /* CalendarKindCell.swift in Sources */,
+				605D6EBD21703A08008D4794 /* PurchaseInAppVC.swift in Sources */,
 				60A4F5C7215B17B2005A99CB /* TransferVC.swift in Sources */,
 				60AC8D1F214F2C3C0049AB11 /* FBStorageManager.swift in Sources */,
 				60D006602168F29C0041AB54 /* DoctorWalkVC.swift in Sources */,
+				6060644E216C8EFA00C7EFEF /* imageRectButton.swift in Sources */,
 				60FF95BA215474150001FDA5 /* RealmManager.swift in Sources */,
 				60FF95D8215A79430001FDA5 /* MainNVC.swift in Sources */,
 				60FF95B02151F7010001FDA5 /* Constant.swift in Sources */,
@@ -682,10 +717,13 @@
 				60FF95AC2150DA140001FDA5 /* MockMessage.swift in Sources */,
 				606FC8CC2148B9F3008B4AEB /* ViewController.swift in Sources */,
 				60FF95CB2158AE570001FDA5 /* SelectUserTypeVC.swift in Sources */,
+				60606448216C7BAB00C7EFEF /* imageButton.swift in Sources */,
 				606FC905214A17FE008B4AEB /* DoctorChatListVC.swift in Sources */,
 				60FF95CF2159F4070001FDA5 /* DoctorCell.swift in Sources */,
 				60FF95BC21547E870001FDA5 /* UserDefaultManager.swift in Sources */,
 				60FF95BE2154DD920001FDA5 /* FBRealTimeDatabaseManager.swift in Sources */,
+				60CE278B216F18B900C46A28 /* UserThanksForRequestVC.swift in Sources */,
+				6060644C216C8C2500C7EFEF /* circleLabel.swift in Sources */,
 				60FF95AA2150C8200001FDA5 /* ChatVC.swift in Sources */,
 				60FF95D2215A3D880001FDA5 /* CommonUtils.swift in Sources */,
 				6049706D216726B600E47681 /* FBRequestManager.swift in Sources */,

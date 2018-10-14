@@ -11,6 +11,7 @@ import UIKit
 class UserRequestCell: UITableViewCell {
     @IBOutlet weak var iconImg: UIImageView!
     @IBOutlet weak var nameLbl: UILabel!
+    @IBOutlet weak var checkImg: UIImageView!
     
     override func awakeFromNib() {
         super.awakeFromNib()

@@ -187,6 +187,9 @@ class FBRequestManager {
                 self.realmM.deleteRequest(customerId: snapshot.key)
                 self.realmM.deleteUserModel(snapshot.key)
                 
+                // ユーザのリスナも消そうね
+                FBUserManager.getInstance().removeObs(snapshot.key)
+                
                 // デリゲート
                 self.delegate?.requestDeleted(doctorId: doctorId, customerId: snapshot.key)
                 
@@ -262,6 +265,12 @@ class FBRequestManager {
         if let handles = obserbers[doctorId] {
             for handle in handles {
                 ref.child(doctorId).removeObserver(withHandle: handle)
+            }
+        }
+        for (indx, id) in getDatas.enumerated() {
+            if id == doctorId {
+                getDatas.remove(at: indx)
+                break
             }
         }
     }

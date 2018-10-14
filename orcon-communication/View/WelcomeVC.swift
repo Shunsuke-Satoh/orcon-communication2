@@ -13,7 +13,6 @@ class WelcomeViewController: UIViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        PurchaseManager.purchaseGetInfo()
     }
 
     override func didReceiveMemoryWarning() {

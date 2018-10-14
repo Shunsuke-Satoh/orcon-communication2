@@ -21,17 +21,23 @@ class DoctorCalendarViewController: UIViewController ,FSCalendarDelegate ,FSCale
     @IBOutlet weak var lbl3: UILabel!
     @IBOutlet weak var img4: EnhancedCircleImageView!
     @IBOutlet weak var lbl4: UILabel!
-    @IBOutlet weak var stack1: UIStackView!
-    @IBOutlet weak var stack2: UIStackView!
-    @IBOutlet weak var stack3: UIStackView!
-    @IBOutlet weak var stack4: UIStackView!
     @IBOutlet weak var leftArrowBtn: UIButton!
     @IBOutlet weak var rightArrowBtn: UIButton!
+    @IBOutlet weak var title1: UILabel!
+    @IBOutlet weak var title2: UILabel!
+    @IBOutlet weak var title3: UILabel!
+    @IBOutlet weak var title4: UILabel!
+    @IBOutlet weak var view1: UIView!
+    @IBOutlet weak var view2: UIView!
+    @IBOutlet weak var view3: UIView!
+    @IBOutlet weak var view4: UIView!
     
-    var stacks: [UIStackView] = []
+    var views: [UIView] = []
+    var titles: [UILabel] = []
     var lbls: [UILabel] = []
     var imgs: [EnhancedCircleImageView] = []
     var kinds: [CalKindModel] = []
+    
     var selectIndx = -1
     var schedule: [ScheduledDateModel] = []
     var isEdited = false
@@ -41,15 +47,32 @@ class DoctorCalendarViewController: UIViewController ,FSCalendarDelegate ,FSCale
     override func viewDidLoad() {
         super.viewDidLoad()
     FBRealTimeDataBaseManager.getInstance().removeScheduleKindDetailObserves()
-
-        // デリゲートの設定
-        self.calendar.dataSource = self
-        self.calendar.delegate = self
         
+        // タイトルの設定
         rightBarBtn = UIBarButtonItem(title: "診療日種別の設定 >", style: .plain, target: self, action: #selector(DoctorCalendarViewController.tappedNextBtn))
-        navigationItem.title = "診療日の設定"
+        navigationItem.title = "カレンダーの設定"
         navigationItem.rightBarButtonItem = rightBarBtn
         
+        // 処理しやすいように配列化
+        views.append(view1)
+        views.append(view2)
+        views.append(view3)
+        views.append(view4)
+        
+        titles.append(title1)
+        titles.append(title2)
+        titles.append(title3)
+        titles.append(title4)
+        
+        lbls.append(lbl1)
+        lbls.append(lbl2)
+        lbls.append(lbl3)
+        lbls.append(lbl4)
+        
+        imgs.append(img1)
+        imgs.append(img2)
+        imgs.append(img3)
+        imgs.append(img4)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -58,50 +81,20 @@ class DoctorCalendarViewController: UIViewController ,FSCalendarDelegate ,FSCale
 
     func myInit() {
         selectIndx = -1
-        // とりあえず配列を初期化
-        stacks.removeAll()
-        stacks.append(stack1)
-        stacks.append(stack2)
-        stacks.append(stack3)
-        stacks.append(stack4)
-        
-        lbls.removeAll()
-        lbls.append(lbl1)
-        lbls.append(lbl2)
-        lbls.append(lbl3)
-        lbls.append(lbl4)
-        
-        imgs.removeAll()
-        imgs.append(img1)
-        imgs.append(img2)
-        imgs.append(img3)
-        imgs.append(img4)
+        setSelectBorders()
+        isEdited = false
         
         // 種別取得
         kinds = RealmManager.getInstance().getKindsByDoctorId(doctorId: UserDefaultManager().getOwnUserId())
         
-        // ４個以上は取らない
+        // ４個以上は取らない 固定なのでいらないかも
         while kinds.count > 4 {
             _ = kinds.popLast()
         }
         
-        // いらないものは不可視化
-        while kinds.count < stacks.count {
-            stacks.last?.isHidden = true
-            _ = stacks.popLast()
-            _ = lbls.popLast()
-            _ = imgs.popLast()
-        }
-        // いるものは可視化
-        for stack in stacks {
-            stack.isHidden = false
-        }
-        
         for (index, kindMdl) in kinds.enumerated() {
-            
-            lbls[index].text = kindMdl.getAllTitle()
-            
-            imgs[index].backgroundColor = UIColor(red: kindMdl.color_r, green: kindMdl.color_g, blue: kindMdl.color_b, alpha: 1)
+            lbls[index].text = kindMdl.getAllTitleForChat()
+            imgs[index].backgroundColor = CommonUtils.uiColor(kindMdl)
         }
         
         // スケジュール取得
@@ -143,7 +136,6 @@ class DoctorCalendarViewController: UIViewController ,FSCalendarDelegate ,FSCale
             }
             // データ再取得・描画
             self.myInit()
-            self.isEdited = false
             
             confV.dismiss(animated: true, completion: {})
         }
@@ -185,6 +177,9 @@ class DoctorCalendarViewController: UIViewController ,FSCalendarDelegate ,FSCale
         
         schedule.append(scheMdl)
         
+        // 編集済みフラグ
+        isEdited = true
+        
     }
     func calendar(_ calendar: FSCalendar, shouldSelect date: Date, at monthPosition: FSCalendarMonthPosition) -> Bool {
         calendar.reloadData()
@@ -225,23 +220,35 @@ class DoctorCalendarViewController: UIViewController ,FSCalendarDelegate ,FSCale
         let yyyymm = DateUtils.stringYYYYMMddFromDate(calendar.currentPage).prefix(4)
         if schedule.filter({scheMdl -> Bool in
             return scheMdl.id_yyyymmdd.starts(with:yyyymm)
-            
+
         }).first == nil {
             // 取得していない場合、取得する
             let mdls = RealmManager.getInstance().getScheduleModelsOrderByDate(yyyymm: String(yyyymm))
-            
+
             for mdl in mdls {
                 schedule.append(mdl)
             }
         }
+        calendar.reloadData()
     }
-    
-    fileprivate let gregorian: Calendar = Calendar(identifier: .gregorian)
-    fileprivate lazy var dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        return formatter
-    }()
+    // 縦横比が変わった時
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        var newHeight = size.height * 0.50
+        let newWidth = size.width * 0.9
+
+        if size.height > size.width {
+            newHeight = size.height * 0.54
+        }
+
+        calendar.frame = CGRect(origin: calendar.frame.origin, size: CGSize(width: newWidth, height: newHeight))
+
+        let newCalHeight = newHeight - calendar.preferredHeaderHeight - calendar.preferredWeekdayHeight
+
+        calendar.contentView.frame = CGRect(origin: calendar.contentView.frame.origin, size: CGSize(width:newWidth,height:newCalHeight))
+        calendar.daysContainer.frame = CGRect(origin: calendar.daysContainer.frame.origin, size: CGSize(width:newWidth,height:newCalHeight))
+        calendar.collectionView.frame = CGRect(origin: calendar.collectionView.frame.origin, size: CGSize(width:newWidth,height:newCalHeight))
+        calendar.reloadData()
+    }
     
     // 祝日判定
     func judgeHoliday(_ date : Date) -> Bool {
@@ -321,43 +328,16 @@ class DoctorCalendarViewController: UIViewController ,FSCalendarDelegate ,FSCale
     }
     func setBorder(index:Int, flag:Bool){
         if flag {
-            imgs[index].layer.borderColor = UIColor.lightGray.cgColor
-            imgs[index].layer.borderWidth = 10
+            views[index].layer.borderColor = UIColor.lightGray.cgColor
+            views[index].layer.borderWidth = 1
         } else {
-            imgs[index].layer.borderColor = UIColor.white.cgColor
-            imgs[index].layer.borderWidth = 0
+            views[index].layer.borderColor = UIColor.white.cgColor
+            views[index].layer.borderWidth = 0
         }
     }
     // MARK: - Navigation
     
     @objc func tappedNextBtn() {
-        if isEdited {
-            // ポップアップを準備
-            let appearance = SCLAlertView.SCLAppearance(
-                showCloseButton:false
-            )
-            
-            let confV = SCLAlertView(appearance: appearance)
-            
-            // 破棄ボタン
-            confV.addButton("はい"){
-                confV.dismiss(animated: true, completion: {})
-                self.next()
-            }
-            
-            // キャンセルボタン
-            confV.addButton("いいえ"){
-                confV.dismiss(animated: true, completion: {})
-            }
-            
-            // ダイアログ表示
-            confV.showNotice("更新されていない編集があります", subTitle: "現在の編集を破棄して移動しますか？")
-        } else{
-            next()
-        }
-    }
-    // 次画面への遷移時に編集されてたら破棄確認ダイアログを出す
-    @IBAction func nextBtn(_ sender: UIBarButtonItem) {
         if isEdited {
             // ポップアップを準備
             let appearance = SCLAlertView.SCLAppearance(

@@ -10,18 +10,48 @@ import UIKit
 import SCLAlertView
 
 class DoctorCalendarSetViewController: UIViewController,UIPopoverPresentationControllerDelegate {
-
-    @IBOutlet weak var table: UITableView!
-    @IBOutlet weak var navBar: UINavigationBar!
     
     var kindModelDisp:[CalKindModel] = []
     var isAdd = false
     var selectedRow = 0
-    var selectedCell:CalendarKindCell?
+    
+    @IBOutlet weak var color1: EnhancedCircleImageView!
+    @IBOutlet weak var color2: EnhancedCircleImageView!
+    @IBOutlet weak var color3: EnhancedCircleImageView!
+    @IBOutlet weak var color4: EnhancedCircleImageView!
+    @IBOutlet weak var openTime1: UILabel!
+    @IBOutlet weak var openTime2: UILabel!
+    @IBOutlet weak var openTime3: UILabel!
+    @IBOutlet weak var closeFlg1: UILabel!
+    @IBOutlet weak var closeFlg2: UILabel!
+    @IBOutlet weak var closeFlg3: UILabel!
+    @IBOutlet weak var closeTime1: UILabel!
+    @IBOutlet weak var closeTime2: UILabel!
+    @IBOutlet weak var closeTime3: UILabel!
+    
+    var colors: [EnhancedCircleImageView] = []
+    var openTimes: [UILabel] = []
+    var closeFlgs: [UILabel] = []
+    var closeTimes: [UILabel] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.title = "診療日種別の選択"
+        
+        colors.append(color1)
+        colors.append(color2)
+        colors.append(color3)
+        colors.append(color4)
+        openTimes.append(openTime1)
+        openTimes.append(openTime2)
+        openTimes.append(openTime3)
+        closeFlgs.append(closeFlg1)
+        closeFlgs.append(closeFlg2)
+        closeFlgs.append(closeFlg3)
+        closeTimes.append(closeTime1)
+        closeTimes.append(closeTime2)
+        closeTimes.append(closeTime3)
+        
         
         dataLoad()
         // Do any additional setup after loading the view.
@@ -29,50 +59,56 @@ class DoctorCalendarSetViewController: UIViewController,UIPopoverPresentationCon
     
     func dataLoad() {
         kindModelDisp = RealmManager.getInstance().getKindModelsOrderByKindNum()
-        table.reloadData()
+        
+        // 色設定
+        for (indx,kindMdl) in kindModelDisp.enumerated() {
+            colors[indx].backgroundColor = CommonUtils.uiColor(kindMdl)
+        }
+        
+        for (indx, _) in openTimes.enumerated() {
+            let kindMdl = kindModelDisp[indx]
+            
+            openTimes[indx].text = kindMdl.open[0].StartHHmm + " 〜 " + kindMdl.open[0].EndHHmm
+            
+            if kindMdl.closeFlg {
+                closeTimes[indx].text = kindMdl.close[0].StartHHmm + " 〜 " + kindMdl.close[0].EndHHmm
+                
+                closeFlgs[indx].isHidden = true
+                closeTimes[indx].isHidden = false
+            } else {
+                closeFlgs[indx].isHidden = false
+                closeTimes[indx].isHidden = true
+            }
+        }
+    }
+    @IBAction func touch1(_ sender: Any) {
+        selectedRow = 0
+        commonSegue()
+    }
+    @IBAction func touch2(_ sender: Any) {
+        selectedRow = 1
+        commonSegue()
+    }
+    @IBAction func touch3(_ sender: Any) {
+        selectedRow = 2
+        commonSegue()
+    }
+    @IBAction func touch4(_ sender: Any) {
+        selectedRow = 3
+        commonSegue()
     }
     
-    // 追加用スクリプト
-//    @IBAction func add(_ sender: UIBarButtonItem) {
-//        if kindModelDisp.count < 4 {
-//            isAdd = true
-//            selectedRow = kindModelDisp.count + 1
-//            // ポップアップさせる
-//            performSegue(withIdentifier: "DoctorCalendarKindPop", sender: nil)
-//        }
-//        else {
-//            // 追加させない
-//            // ポップアップを準備
-//            let appearance = SCLAlertView.SCLAppearance(
-//                showCloseButton:false
-//            )
-//
-//            let confV = SCLAlertView(appearance: appearance)
-//            confV.addButton("了解"){
-//                confV.dismiss(animated: true, completion: {})
-//            }
-//            confV.showWarning("警告", subTitle: "種別は４種類までです。")
-//        }
-//    }
+    func commonSegue() {
+        isAdd = false
+        // 画面遷移
+        performSegue(withIdentifier: "DoctorCalendarKindPop", sender: nil)
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "DoctorCalendarKindPop" {
             
             let popVC = segue.destination as! DoctorCalendarKindVC
-//            popVC.popoverPresentationController?.delegate = self
-            
-            // 画面サイズ
-//            popVC.preferredContentSize = CGSize(width:self.view.frame.width * 0.95, height:300)
-            
-            // 表示位置
-//            if isAdd {
-//                popVC.popoverPresentationController?.sourceView = navBar
-//
-//                popVC.popoverPresentationController?.sourceRect = navBar.bounds
-//            } else {
-//                popVC.popoverPresentationController?.sourceView = selectedCell
-//
-//                popVC.popoverPresentationController?.sourceRect = selectedCell!.bounds
-//            }
+
             popVC.calKindMdl = kindModelDisp[selectedRow]
             
             popVC.delegate = self
@@ -80,82 +116,8 @@ class DoctorCalendarSetViewController: UIViewController,UIPopoverPresentationCon
             popVC.row = selectedRow
         }
     }
-//    func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
-//        return .none
-//    }
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-    
-    // 戻るボタン
-    @IBAction func back(_ sender: UIBarButtonItem) {
-        let navi = self.navigationController!
-        navi.popViewController(animated: true)
-    }
-    
 }
 
-extension DoctorCalendarSetViewController: UITableViewDataSource, UITableViewDelegate {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return kindModelDisp.count
-    }
-    
-    // セルの表示
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // ストーリーボードで指定したidが必要
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CalendarKindCell") as! CalendarKindCell
-        
-        let kindMdl = kindModelDisp[indexPath.row]
-        
-        // 種別タイトル設定
-        cell.titleLbl.text = kindMdl.getTitle()
-        
-        // 色設定
-        cell.colorImg.backgroundColor = CommonUtils.uiColor(kindMdl)
-        
-        // 休診日の場合はほとんど表示しない
-        if kindMdl.allCloseFlg {
-            cell.openLbl.isHidden = true
-            cell.closeLbl.isHidden = true
-            cell.yasumiUmuLbl.isHidden = true
-            
-            return cell
-        }
-        
-        // 営業開始時間
-        cell.openLbl.isHidden = false
-        cell.openLbl.text = kindMdl.open[0].StartHHmm + " 〜 " + kindMdl.open[0].EndHHmm
-        
-        // 休診時間
-        cell.closeLbl.isHidden = true
-        cell.yasumiUmuLbl.isHidden = false
-        
-        if kindMdl.closeFlg {
-            cell.closeLbl.text = kindMdl.close[0].StartHHmm + " 〜 " + kindMdl.close[0].EndHHmm
-            
-            cell.closeLbl.isHidden = false
-            cell.yasumiUmuLbl.isHidden = true
-        }
-        
-        return cell
-    }
-    
-    // 選択時の動作
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        isAdd = false
-        selectedRow = indexPath.row
-        selectedCell = (table.cellForRow(at: indexPath) as! CalendarKindCell)
-        table.deselectRow(at: indexPath, animated: false)
-        // ポップアップさせる
-        performSegue(withIdentifier: "DoctorCalendarKindPop", sender: nil)
-    }
-}
 extension DoctorCalendarSetViewController: DoctorCalKindPopDelegate {
     func save(mdl: CalKindModel) {
         dataLoad()

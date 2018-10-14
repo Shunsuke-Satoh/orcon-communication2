@@ -14,4 +14,5 @@ class CalendarKindCell: UITableViewCell {
     @IBOutlet weak var openLbl: UILabel!
     @IBOutlet weak var yasumiUmuLbl: UILabel!
     @IBOutlet weak var closeLbl: UILabel!
+//    @IBOutlet weak var parentView: UIView!
 }

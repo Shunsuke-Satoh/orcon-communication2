@@ -63,8 +63,16 @@ class DoctorRequestMVC: UIViewController,UITableViewDataSource, UITableViewDeleg
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // ストーリーボードで指定したidが必要
         let cell = tableView.dequeueReusableCell(withIdentifier: "UserRequestCell") as! UserRequestCell
-        cell.nameLbl.text = searchResults[indexPath.row].name
-        cell.iconImg.image = userDM.loadImageIcon(userId: searchResults[indexPath.row].userId)
+        
+        let userMdl = searchResults[indexPath.row]
+        cell.nameLbl.text = userMdl.name
+        cell.iconImg.image = userDM.loadImageIcon(userId: userMdl.userId)
+        cell.checkImg.isHidden = true
+        
+        // 治療完了のみチェックマークをつける
+        if userMdl.status == Constant.statusComp {
+            cell.checkImg.isHidden = false
+        }
         
         // セルの背景は完全透過
         cell.backgroundColor = UIColor.clear

@@ -35,7 +35,7 @@ class DoctorChatListViewController: UIViewController, UITableViewDataSource, UIT
         for mdl in array {
             searchResults.append(mdl)
         }
-        
+        searchCommon()
         navigationItem.title = "トーク"
     }
     
@@ -163,6 +163,7 @@ extension DoctorChatListViewController: MessageDelegate {
         for mdl in array {
             searchResults.append(mdl)
         }
+        searchCommon()
         table.reloadData()
     }
    func messageReaded(msgModel: MessageModel) {
@@ -172,6 +173,7 @@ extension DoctorChatListViewController: MessageDelegate {
             for mdl in array {
                 searchResults.append(mdl)
             }
+            searchCommon()
             table.reloadData()
         }
     }

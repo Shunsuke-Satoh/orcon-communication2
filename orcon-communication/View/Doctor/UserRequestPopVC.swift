@@ -19,12 +19,19 @@ class UserRequestPopVC: UIViewController {
     @IBOutlet weak var confirmBtn: UIButton!
     @IBOutlet weak var denyBtn: UIButton!
     @IBOutlet weak var compBtn: UIButton!
+    @IBOutlet weak var closeBtn: imageRoundButton!
     
+    @IBOutlet weak var telView: UIStackView!
+    @IBOutlet weak var mailView: UIStackView!
+    @IBOutlet weak var reqView: UIStackView!
+    @IBOutlet weak var dateView: UIStackView!
     var image:UIImage?
     var user:UserModel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        // 下線をつける
+        telLbl.adjustsFontSizeToFitWidth = true
 
         imageV.image = image!
         nameLbl.text = user.name
@@ -39,9 +46,6 @@ class UserRequestPopVC: UIViewController {
         else if user.status == Constant.statusComp {
             statusLbl.text = Constant.status.statusComp.rawValue
         }
-//        let span = user.entryDate!.timeIntervalSinceNow
-//        let year = floor(span/60/60/24/365)
-//        let month = floor(span/60/60/24/3)
         
         termLbl.text = DateUtils.stringFromDate(user.entryDate!) + "に登録"
         
@@ -56,7 +60,19 @@ class UserRequestPopVC: UIViewController {
             
             compBtn.isHidden = false
         }
-        // Do any additional setup after loading the view.
+        
+        setUpBtn(compBtn)
+        setUpBtn(confirmBtn)
+        setUpBtn(denyBtn)
+        setUpBtn(closeBtn)
+    }
+    
+    func setUpBtn(_ btn:UIButton) {
+        
+        let height = btn.bounds.height
+        btn.imageEdgeInsets = UIEdgeInsets(top: height * 0.3, left: 5, bottom: height * 0.3, right: 5)
+        
+//        btn.layer.cornerRadius = 26
     }
     
     @IBAction func confirm(_ sender: Any) {

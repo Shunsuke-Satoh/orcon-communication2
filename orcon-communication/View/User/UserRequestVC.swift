@@ -11,8 +11,6 @@ import SCLAlertView
 
 class UserRequestVC: UIViewController,UITableViewDataSource, UITableViewDelegate,UISearchBarDelegate {
     @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var selectedLbl: UILabel!
-    @IBOutlet weak var requestBtn: UIButton!
     @IBOutlet weak var mySearchBar: UISearchBar!
     
     
@@ -22,20 +20,20 @@ class UserRequestVC: UIViewController,UITableViewDataSource, UITableViewDelegate
     var doctors:[UserModel] = []
     var searchResults:[UserModel] = []
     
-    var selectedUserId = ""
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        navigationItem.title = "医院の検索"
+        
+        // デリゲート
         tableView.delegate = self
         tableView.dataSource = self
         mySearchBar.delegate = self
+        FBUserManager.getInstance().delegateImg = self
+        
         searchResults = doctors
-        requestBtn.isEnabled = false
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        load()
+        
+//        load()
     }
     
     func load() {
@@ -52,6 +50,7 @@ class UserRequestVC: UIViewController,UITableViewDataSource, UITableViewDelegate
             self.doctors = self.realmDM.getDoctors()
             successView.dismiss(animated: true, completion: {})
         }
+        
         failView.addButton("OK"){
             failView.dismiss(animated: true, completion: {})
         }
@@ -76,8 +75,18 @@ class UserRequestVC: UIViewController,UITableViewDataSource, UITableViewDelegate
         // Dispose of any resources that can be recreated.
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    // 検索件数＝セクション数
+    func numberOfSections(in tableView: UITableView) -> Int {
         return searchResults.count
+    }
+    
+    // セクション内の行は1か0
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if searchResults.count > 0 {
+            return 1
+        }
+        return searchResults.count
+        
     }
     
     
@@ -86,10 +95,12 @@ class UserRequestVC: UIViewController,UITableViewDataSource, UITableViewDelegate
         var ret = UITableViewCell()
         
         if let cell = tableView.dequeueReusableCell(withIdentifier: "doctorCell") as? DoctorCell{
-            cell.clinicName.text = searchResults[indexPath.row].clinicName
-            cell.iconImg.image = userDM.loadImageIcon(userId: searchResults[indexPath.row].userId)
-            cell.topImg.image = userDM.loadImageTop(userId:searchResults[indexPath.row].userId)
-            cell.userId = searchResults[indexPath.row].userId
+//            let row = indexPath.row
+            let row = indexPath.section
+            cell.clinicName.text = searchResults[row].clinicName
+            cell.iconImg.image = userDM.loadImageIcon(userId: searchResults[row].userId)
+            cell.topImg.image = userDM.loadImageTop(userId:searchResults[row].userId)
+            cell.userId = searchResults[row].userId
             
             ret = cell
         }
@@ -100,77 +111,71 @@ class UserRequestVC: UIViewController,UITableViewDataSource, UITableViewDelegate
     // 選択時の動作
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.view.endEditing(true)
-        selectedLbl.text = searchResults[indexPath.row].clinicName
-        selectedUserId = searchResults[indexPath.row].userId
-        requestBtn.isEnabled = true
+        performSegue(withIdentifier: "toRequestSendSegue", sender: searchResults[indexPath.section].userId)
+    }
+    
+    // セクションヘッダー行間
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 20
+    }
+    // セクションヘッダータイトル
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return (section + 1).description + "件目"
+    }
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        let v = view as? UITableViewHeaderFooterView
+        v?.textLabel?.frame = (v?.frame)!
+        v?.textLabel?.textAlignment = .center
+        v?.backgroundColor = .white
     }
     
     // 検索ボックスの編集による検索
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        searchResults.removeAll()
-        for doc in doctors {
-            if doc.clinicName.contains(mySearchBar.text!) {
-                searchResults.append(doc)
-            }
-        }
-        requestBtn.isEnabled = false
-        selectedLbl.text = ""
-        selectedUserId = ""
-        tableView.reloadData()
-    }
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-//        if searchBar.text! != "" {
-//            FBUserManager.getInstance().searchAndSaveRealmDoctorInfo(searchBar.text!, callback: {
-//                self.load()
-//            })
+//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+//        searchResults.removeAll()
+//        for doc in doctors {
+//            if doc.clinicName.contains(mySearchBar.text!) {
+//                searchResults.append(doc)
+//            }
 //        }
-    }
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-    // リクエスト
-    @IBAction func request(_ sender: UIButton) {
-        // サーバアップロード
-        FBRequestManager.getInstance().uploadRequestFromCustomerToDoctor(doctorId: selectedUserId)
-        // Realm保存
-        let realmDM = RealmManager.getInstance()
-        realmDM.insertRequest(customerId: userDM.getOwnUserId(), doctorId: selectedUserId, requestDate: Date(), isConfirm: false, confirmDate: nil)
-
-        // push通知
-        let topicName = CommonUtils.getReqDoctorTopicName(doctorId: selectedUserId)
-        let userMdl = realmDM.getUserModelByUserId(userId: userDM.getOwnUserId())!
-        CommonUtils.postDataMessage(topicName: topicName, title: userMdl.name + "さんからリクエストが届きました", body: "", callback: {(_) in})
-        
-        // push受け取りのためトピック参加
-        CommonUtils.getInstance().signInTockenToRequest(false)
-        // リスナー登録
-        FBRequestManager.getInstance().setRequestObserver(doctorId: selectedUserId, customerId: userDM.getOwnUserId())
-        // 関係無いドクター情報を消去
-        let doctors = realmDM.getDoctors()
-        for doc in doctors {
-            if doc.userId != selectedUserId {
-                FBUserManager.getInstance().removeObserver(doc.userId)
-                realmDM.deleteUserModel(doc.userId)
-            }
+//        tableView.reloadData()
+//    }
+    
+    // 検索ボックスによる検索
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        self.view.endEditing(true)
+        if searchBar.text! != "" {
+            let appearance = SCLAlertView.SCLAppearance(
+                showCloseButton:false
+            )
+            let waitView = SCLAlertView(appearance: appearance)
+            let waitViewRes = waitView.showWait("クラウド検索中", subTitle: "")
+            FBUserManager.getInstance().searchAndSaveRealmDoctorInfo(searchBar.text!, callback: {
+                self.doctors = self.realmDM.getDoctors()
+                self.searchResults.removeAll()
+                for doc in self.doctors {
+                    if doc.clinicName.contains(self.mySearchBar.text!) || doc.clinicAddress.contains(self.mySearchBar.text!) {
+                        self.searchResults.append(doc)
+                    }
+                }
+                self.tableView.reloadData()
+                waitViewRes.close()
+            })
         }
-        
-        // 画面遷移
-        performSegue(withIdentifier: "toUserMainSegue", sender: nil)
+    }
+    
+    // 遷移先にドクターIDを渡す
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let vc = segue.destination as! UserRequestSendVC
+        vc.doctorId = sender as! String
     }
 }
 
 extension UserRequestVC: FBUserManagerImageDelegate {
     func compTopImg(userId: String) {
-        
+        tableView.reloadData()
     }
     
     func compIconImg(userId: String) {
-        
+        tableView.reloadData()
     }
 }

@@ -18,12 +18,12 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="bgImage_top" translatesAutoresizingMaskIntoConstraints="NO" id="kXz-r5-WVv">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                            </imageView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0Ye-o5-XIC">
+                                <rect key="frame" x="0.0" y="20" width="375" height="64.5"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Orcon_logoTitle" translatesAutoresizingMaskIntoConstraints="NO" id="hAO-2a-fXJ">
-                                <rect key="frame" x="100" y="120" width="175" height="226.5"/>
+                                <rect key="frame" x="75" y="84.5" width="225" height="291.5"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="hAO-2a-fXJ" secondAttribute="height" multiplier="17:22" id="4UA-zw-2vA"/>
                                 </constraints>
@@ -31,9 +31,13 @@
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="hAO-2a-fXJ" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="100" id="4wV-8r-9DL"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="hAO-2a-fXJ" secondAttribute="trailing" constant="100" id="7VM-vV-J4S"/>
-                            <constraint firstItem="hAO-2a-fXJ" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="100" id="EhK-jW-Bs9"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="0Ye-o5-XIC" secondAttribute="trailing" id="2Lj-IS-Er8"/>
+                            <constraint firstItem="0Ye-o5-XIC" firstAttribute="height" secondItem="6Tk-OE-BBY" secondAttribute="height" multiplier="0.1" id="3xJ-s9-DIz"/>
+                            <constraint firstItem="0Ye-o5-XIC" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="9Gm-On-icW"/>
+                            <constraint firstItem="hAO-2a-fXJ" firstAttribute="height" secondItem="6Tk-OE-BBY" secondAttribute="height" multiplier="0.45" id="DZZ-oc-wua"/>
+                            <constraint firstItem="hAO-2a-fXJ" firstAttribute="top" secondItem="0Ye-o5-XIC" secondAttribute="bottom" id="Djb-ny-bQH"/>
+                            <constraint firstItem="hAO-2a-fXJ" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="pbD-co-eUB"/>
+                            <constraint firstItem="0Ye-o5-XIC" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="vNm-SV-lcA"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
@@ -45,6 +49,5 @@
     </scenes>
     <resources>
         <image name="Orcon_logoTitle" width="706" height="930"/>
-        <image name="bgImage_top" width="240" height="320"/>
     </resources>
 </document>

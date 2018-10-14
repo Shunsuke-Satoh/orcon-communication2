@@ -10,6 +10,7 @@ import UIKit
 import Firebase
 import FirebaseAuth
 import SCLAlertView
+import SVProgressHUD
 
 class AcountEntryConfirmViewController: UIViewController {
     @IBOutlet weak var nameLbl: UILabel!
@@ -24,8 +25,6 @@ class AcountEntryConfirmViewController: UIViewController {
     @IBOutlet weak var iconImgView: UIImageView!
     
     @IBOutlet weak var confirmBtn: UIButton!
-    
-    @IBOutlet weak var loadingIcon: UIActivityIndicatorView!
     
     @IBOutlet weak var clinicNameStack: UIStackView!
     @IBOutlet weak var clinicAddressStack: UIStackView!
@@ -43,20 +42,6 @@ class AcountEntryConfirmViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        loadingIcon.hidesWhenStopped = true
-        loadingIcon.stopAnimating()
-        loadingIcon.frame = CGRect(x: self.view.center.x - 25, y: self.view.center.y - 25, width: 50, height: 50)
-        loadingIcon.center = self.view.center
-        
-        // ボタンのスタイル
-        confirmBtn.setTitleColor(UIColor.black, for: .normal)
-        confirmBtn.backgroundColor = UIColor.white
-        confirmBtn.layer.cornerRadius = 20
-        confirmBtn.layer.borderWidth = 1
-        confirmBtn.layer.shadowOpacity = 0.5
-        confirmBtn.layer.shadowOffset = CGSize(width:2,height:2)
-        
         
         nameLbl.text = name
         hiraLbl.text = hira
@@ -101,12 +86,14 @@ class AcountEntryConfirmViewController: UIViewController {
         let dispatchGroup = DispatchGroup()
         
         // ローディング開始
-        loadingIcon.startAnimating()
+        SVProgressHUD.show()
+//        loadingIcon.startAnimating()
         
         // ユーザ認証
         Auth.auth().createUser(withEmail: email, password: password){(authResult, error) in
             if let error = error {
-                self.loadingIcon.stopAnimating()
+                SVProgressHUD.dismiss()
+//                self.loadingIcon.stopAnimating()
                 // ポップアップを準備
                 let appearance = SCLAlertView.SCLAppearance(
                     showCloseButton:false
@@ -129,9 +116,17 @@ class AcountEntryConfirmViewController: UIViewController {
                 userDM.setOwnUserId(uid: uid)
                 userDM.setOwnPassword(password: self.password)
                 userDM.setOwnUserType(userType: self.userType)
+                
+                // ドクターの場合は課金有効日時も入れる
+                var purchaseLimitDate:Date?
           
+                // 無料期間は30日
+                if CommonUtils.isUserTypeDoctor() {
+                    purchaseLimitDate = DateUtils.calcDateDay(day: 30, baseDate: DateUtils.stringFromDate(Date()))
+                }
+                
                 // ユーザ情報をアップロード
-                FBUserManager.getInstance().uploadUserAndDoctor(userId: uid, userType: self.userType, name: self.name, hira: self.hira, tel: self.tel, email: self.email, password: self.password, clinicName: self.clinicName, clinicAddress: self.clinicAddress)
+                FBUserManager.getInstance().uploadUserAndDoctor(userId: uid, userType: self.userType, name: self.name, hira: self.hira, tel: self.tel, email: self.email, password: self.password, clinicName: self.clinicName, clinicAddress: self.clinicAddress, purchaseLimitDate: purchaseLimitDate)
            
                 
                 // 画像データをアップロード トップ、アイコン
@@ -156,7 +151,8 @@ class AcountEntryConfirmViewController: UIViewController {
                 }
                 
                 // Realmに保存
-                realmDM.insertUpdateUser(userId: uid, userType: self.userType, name: self.name, hira: self.hira, tel: self.tel, email: self.email, clinicName: self.clinicName, clinicAddress: self.clinicAddress, rooms:[],requestDoctorId: "",entryDate: Date(),status:0, deleteDate: nil)
+                
+                realmDM.insertUpdateUser(userId: uid, userType: self.userType, name: self.name, hira: self.hira, tel: self.tel, email: self.email, clinicName: self.clinicName, clinicAddress: self.clinicAddress, rooms:[],requestDoctorId: "",entryDate: Date(),status:0, deleteDate: nil, purchaseLimitDate: purchaseLimitDate)
                 
                 // UserDefaultに保存 トップ、アイコン
                 userDM.saveImageForOwnIcon(uiImage: self.iconImg)
@@ -167,7 +163,7 @@ class AcountEntryConfirmViewController: UIViewController {
                 
                 // ローディング終了
                 dispatchGroup.notify(queue: .main) {
-                    self.loadingIcon.stopAnimating()
+                    SVProgressHUD.dismiss()
                     self.performSegue(withIdentifier: "toCompleteSegue", sender: nil)
                 }
             }

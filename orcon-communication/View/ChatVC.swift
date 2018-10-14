@@ -26,6 +26,9 @@ class ChatViewController: MessagesViewController, UIImagePickerControllerDelegat
     var messageModelList: [MessageModel] = []
     var otherUserModel: UserModel?
     
+    var myInputBar: MessageInputBar!
+    var reserveMessage: String? // いきなり予約画面から来た時用,普通はnil
+    
     lazy var formatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ja_JP")
@@ -39,6 +42,7 @@ class ChatViewController: MessagesViewController, UIImagePickerControllerDelegat
     override func viewDidLoad() {
         
         super.viewDidLoad()
+        messagesCollectionView.backgroundView = UIImageView(image: UIImage(named: "background_img_chat"))
         
         ChatDataManager.getInstance().delegate = self
         FBUserManager.getInstance().delegateImg = self
@@ -68,6 +72,10 @@ class ChatViewController: MessagesViewController, UIImagePickerControllerDelegat
                     else if CommonUtils.isUserTypeUser() {
                         self.navigationItem.title = self.otherUserModel!.clinicName + " とのトーク"
                     }
+                }
+                
+                if self.reserveMessage != nil {
+                    self.myInputBar.inputTextView.text = self.reserveMessage
                 }
             }
         }
@@ -137,48 +145,62 @@ class ChatViewController: MessagesViewController, UIImagePickerControllerDelegat
 //        defaultStyle()
         let newMessageInputBar = MessageInputBar()
         newMessageInputBar.sendButton.tintColor = UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
+        
         newMessageInputBar.delegate = self
         messageInputBar = newMessageInputBar
         
-        messageInputBar.backgroundView.backgroundColor = UIColor(red: 255/255, green: 254/255 ,blue: 240/255, alpha: 1)
+        messageInputBar.backgroundView.backgroundColor = .white
         messageInputBar.isTranslucent = false
         messageInputBar.inputTextView.backgroundColor = .white
-        messageInputBar.inputTextView.layer.borderWidth = 0
+        messageInputBar.inputTextView.layer.borderWidth = 1
+        messageInputBar.inputTextView.layer.borderColor = UIColor.lightGray.cgColor
+        messageInputBar.inputTextView.layer.cornerRadius = 20
+        messageInputBar.inputTextView.textContainerInset = UIEdgeInsets(top: 8, left: 10, bottom: 8, right: 0)
+        messageInputBar.inputTextView.placeholderLabelInsets = UIEdgeInsets(top: 8, left: 13, bottom: 8, right: 5)
+        messageInputBar.inputTextView.placeholderTextColor = UIColor.lightGray
+        messageInputBar.inputTextView.placeholder = "メッセージを入力する"
+        messageInputBar.inputTextView.textColor = UIColor.lightGray
+        messageInputBar.inputTextView.delegate = self
+        
+        myInputBar = messageInputBar
+        
         let items = [
             makeButton(named: "icon_library"),
-            makeButton2(named: "icon_calendar2"),
-            messageInputBar.sendButton
-                .configure {
-                    $0.layer.cornerRadius = 8
-                    $0.layer.borderWidth = 1.5
-                    $0.layer.borderColor = $0.titleColor(for: .disabled)?.cgColor
-                    $0.setTitleColor(.white, for: .normal)
-                    $0.setTitleColor(.white, for: .highlighted)
-                    $0.setSize(CGSize(width: 52, height: 30), animated: true)
-                }.onDisabled {
-                    $0.layer.borderColor = $0.titleColor(for: .disabled)?.cgColor
-                    $0.backgroundColor = .white
-                }.onEnabled {
-                    $0.backgroundColor = UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
-                    $0.layer.borderColor = UIColor.clear.cgColor
-                }.onSelected {
-                    // We use a transform becuase changing the size would cause the other views to relayout
-                    $0.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
-                }.onDeselected {
-                    $0.transform = CGAffineTransform.identity
-            }
+            makeButton2(named: "icon_calendar")
         ]
         items.forEach { $0.tintColor = .lightGray }
         
-        // We can change the container insets if we want
-        messageInputBar.inputTextView.textContainerInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
-        messageInputBar.inputTextView.placeholderLabelInsets = UIEdgeInsets(top: 8, left: 5, bottom: 8, right: 5)
-        
-        // Since we moved the send button to the bottom stack lets set the right stack width to 0
-        messageInputBar.setRightStackViewWidthConstant(to: 0, animated: true)
+        let sendBtn = [messageInputBar.sendButton
+            .configure {
+                $0.setTitle(" > ", for: .normal)
+                $0.layer.cornerRadius = 20
+                $0.layer.borderWidth = 1.5
+                $0.layer.borderColor = $0.titleColor(for: .disabled)?.cgColor
+                $0.setTitleColor(.white, for: .normal)
+                $0.setTitleColor(.white, for: .highlighted)
+                $0.setSize(CGSize(width: 40, height: 40), animated: true)
+            }.onDisabled {
+                $0.layer.borderColor = $0.titleColor(for: .disabled)?.cgColor
+                $0.backgroundColor = .white
+            }.onEnabled {
+                $0.backgroundColor = UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
+                $0.layer.borderColor = UIColor.clear.cgColor
+            }.onSelected {
+                // We use a transform becuase changing the size would cause the other views to relayout
+                $0.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
+            }.onDeselected {
+                $0.transform = CGAffineTransform.identity
+            }]
         
         // Finally set the items
-        messageInputBar.setStackViewItems(items, forStack: .bottom, animated: true)
+        messageInputBar.setLeftStackViewWidthConstant(to: 90, animated: true)
+        messageInputBar.setStackViewItems(items, forStack: .left, animated: true)
+        messageInputBar.leftStackView.alignment = .center
+        
+        messageInputBar.setRightStackViewWidthConstant(to: 42, animated: true)
+        messageInputBar.setStackViewItems(sendBtn, forStack: .right, animated: true)
+        messageInputBar.rightStackView.alignment = .center
+        
     }
     
     // MARK: - Helpers
@@ -549,6 +571,17 @@ extension ChatViewController: MessageInputBarDelegate {
         }
         messagesCollectionView.scrollToBottom()
         inputBar.inputTextView.text = String()
+    }
+}
+
+// メッセージのインプットが始まったらアイコン群を隠す。終わったら戻す
+extension ChatViewController:UITextViewDelegate {
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        myInputBar.setLeftStackViewWidthConstant(to: 0, animated: true)
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        myInputBar.setLeftStackViewWidthConstant(to: 90, animated: true)
     }
 }
 

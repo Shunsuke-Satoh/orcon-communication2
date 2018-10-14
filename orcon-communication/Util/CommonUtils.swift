@@ -50,6 +50,34 @@ class CommonUtils {
         return hh + ":" + mm
     }
     
+    static func isSafeLimit() -> Bool {
+        // カスタマーは関係ない
+        if isUserTypeUser() {
+            return true
+        }
+        
+        let realmM = RealmManager.getInstance()
+        let userDM = UserDefaultManager()
+        
+        var ownMdl = realmM.getUserModelByUserId(userId: userDM.getOwnUserId())!
+        
+        if ownMdl.purchaseLimitDate == nil {
+            // 無料期間は一ヶ月
+            let newMdl = ownMdl.copyModel()
+            let newDate = DateUtils.calcDateDay(day: 30, baseDate: DateUtils.stringFromDate(ownMdl.entryDate!))
+            newMdl.purchaseLimitDate = newDate
+            
+            // realm
+            realmM.updateUser(newMdl)
+            // FB
+            FBUserManager.getInstance().updatePurchaseLimitTime(newMdl.userId, newLimitDate: newMdl.purchaseLimitDate!)
+            
+            ownMdl = realmM.getUserModelByUserId(userId: userDM.getOwnUserId())!
+        }
+        
+        return ownMdl.purchaseLimitDate! >= Date()
+    }
+    
     static func getChatTopicName(roomId:String) -> String {
         var topicName = ""
         if let room = RealmManager.getInstance().getChatRoomModelByRoomId(roomId: roomId) {

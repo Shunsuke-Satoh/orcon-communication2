@@ -10,23 +10,64 @@ import UIKit
 import SCLAlertView
 
 class SettingVC: UIViewController {
-
+    @IBOutlet weak var acountV: UIView!
+    @IBOutlet weak var purchaseV: UIView!
+    @IBOutlet weak var supportV: UIView!
+    @IBOutlet weak var termV: UIView!
+    @IBOutlet weak var companyV: UIView!
+    @IBOutlet weak var name: UILabel!
+    @IBOutlet weak var iconImg: UIImageView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.title = "設定"
+        
+        FBUserManager.getInstance().delegate = self
+        FBUserManager.getInstance().delegateImg = self
         // Do any additional setup after loading the view.
+        dataReload()
     }
     
+    func dataReload() {
+        let ownMdl = RealmManager.getInstance().getUserModelByUserId(userId: UserDefaultManager().getOwnUserId())
+        
+        if CommonUtils.isUserTypeDoctor() {
+            name.text = ownMdl?.clinicName
+        }
+        else if CommonUtils.isUserTypeUser() {
+            name.text = ownMdl?.name
+            purchaseV.isHidden = true
+        }
+        
+        iconImg.image = UserDefaultManager().loadImageForOwnIcon()
+    }
+    
+    // タッチイベント 一回色を元に戻してそれぞれのVに色判定してもらう
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        acountV.backgroundColor = .clear
+        purchaseV.backgroundColor = .clear
+        supportV.backgroundColor = .clear
+        termV.backgroundColor = .clear
+        companyV.backgroundColor = .clear
+        super.touchesBegan(touches, with: event)
+    }
 
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toAcountChangeSegue" {
             let vc = segue.destination as! AcountEntryViewController
             vc.userType = UserDefaultManager().getOwnUserType()
+        }
+    }
+    
+    // アカウント情報設定画面へ
+    @IBAction func tapAcountSet(_ sender: Any) {
+        performSegue(withIdentifier: "toAcountChangeSegue", sender: nil)
+    }
+    
+    // 課金画面へ
+    @IBAction func tapPerchase(_ sender: Any) {
+        if CommonUtils.isUserTypeDoctor() {
+            performSegue(withIdentifier: "toPurchaseSegue", sender: nil)
         }
     }
     
@@ -89,4 +130,20 @@ class SettingVC: UIViewController {
     }
     */
 
+}
+
+
+extension SettingVC: FBUserManagerImageDelegate, FBUserManagerDelegate {
+    func compTopImg(userId: String) {
+        dataReload()
+    }
+    
+    func compIconImg(userId: String) {
+        dataReload()
+    }
+    
+    func userUpdated(userModel: UserModel) {
+        dataReload()
+    }
+    
 }

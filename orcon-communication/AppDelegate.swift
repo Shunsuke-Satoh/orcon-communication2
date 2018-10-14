@@ -36,29 +36,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         application.registerForRemoteNotifications()
         
         // see notes below for the meaning of Atomic / Non-Atomic
-//        SwiftyStoreKit.completeTransactions(atomically: true) { purchases in
-//            for purchase in purchases {
-//                switch purchase.transaction.transactionState {
-//                case .purchased, .restored:
-//                    if purchase.needsFinishTransaction {
-//                        // Deliver content from server, then:
-//                        SwiftyStoreKit.finishTransaction(purchase.transaction)
-//                    }
-//                // Unlock content
-//                case .failed, .purchasing, .deferred:
-//                    break // do nothing
-//                }
-//            }
-//        }
+        SwiftyStoreKit.completeTransactions(atomically: true) { purchases in
+            for purchase in purchases {
+                switch purchase.transaction.transactionState {
+                case .purchased, .restored:
+                    if purchase.needsFinishTransaction {
+                        // Deliver content from server, then:
+                        SwiftyStoreKit.finishTransaction(purchase.transaction)
+                    }
+                // Unlock content
+                case .failed, .purchasing, .deferred:
+                    break // do nothing
+                }
+            }
+        }
         
-        
-        
-        
+        PurchaseManager.getInstance().purchaseGetInfo()
         
         let userDM = UserDefaultManager()
         
         // ユーザ登録以降の起動であればチャットデータを取得してメイン画面へ
         if userDM.getOwnUserId() != "" {
+            
             ChatDataManager.getInstance().getDataFromDB(callback: {(errorMsg) in
                 // スケジュールオブザーバー
                 let fbM = FBRealTimeDataBaseManager.getInstance()
@@ -80,7 +79,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
                     let initialViewController = storyboard.instantiateViewController(withIdentifier: "DoctorMain")
                     self.window?.rootViewController = initialViewController
                 }else {
-                    let initialViewController = storyboard.instantiateViewController(withIdentifier: "userRequest")
+                    let initialViewController = storyboard.instantiateViewController(withIdentifier: "userRequestNavi")
                     self.window?.rootViewController = initialViewController
                 }
             }
@@ -172,7 +171,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         // チャット画面に飛ばす
         // TODO
-        print("受け取った")
         
         completionHandler()
         
@@ -180,7 +178,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     
     // トークン取得時
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String) {
-        print("getToken")
         // トークンをUserDefaultに保存
         let userDM = UserDefaultManager()
         userDM.setOwnToken(token: fcmToken)
